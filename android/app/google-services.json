@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "696613526941",
+    "project_id": "resturant-recommendation-6fd88",
+    "storage_bucket": "resturant-recommendation-6fd88.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696613526941:android:0981a99693e7fd837a2374",
+        "android_client_info": {
+          "package_name": "com.example.group_chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "696613526941-v78s3dju957mmth2u0sitloa23b897ck.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBGh6NKKljD-KO0UfsmaHCv46VfKvq3SE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "696613526941-v78s3dju957mmth2u0sitloa23b897ck.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

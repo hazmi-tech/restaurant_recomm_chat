@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_web_client_id" translatable="false">696613526941-v78s3dju957mmth2u0sitloa23b897ck.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">696613526941</string>
+    <string name="google_api_key" translatable="false">AIzaSyDBGh6NKKljD-KO0UfsmaHCv46VfKvq3SE</string>
+    <string name="google_app_id" translatable="false">1:696613526941:android:0981a99693e7fd837a2374</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDBGh6NKKljD-KO0UfsmaHCv46VfKvq3SE</string>
+    <string name="google_storage_bucket" translatable="false">resturant-recommendation-6fd88.appspot.com</string>
+    <string name="project_id" translatable="false">resturant-recommendation-6fd88</string>
+</resources>

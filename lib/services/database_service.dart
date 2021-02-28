@@ -28,7 +28,7 @@ class DatabaseService {
     DocumentReference groupDocRef = await groupCollection.add({
       'groupName': groupName,
       'groupIcon': '',
-      'admin': userName,
+      'admin': uid,
       'members': [],
       //'messages': ,
       'groupId': '',
@@ -36,10 +36,6 @@ class DatabaseService {
       'recentMessageSender': ''
     });
 
-    await groupDocRef.updateData({
-        'members': FieldValue.arrayUnion([uid + '_' + userName]),
-        'groupId': groupDocRef.documentID
-    });
 
     DocumentReference userDocRef = userCollection.document(uid);
     return await userDocRef.updateData({
@@ -108,6 +104,14 @@ class DatabaseService {
     return snapshot;
   }
 
+Future<String> getSpecie(String email) async {
+    DocumentReference documentReference = userCollection.where('email', isEqualTo: email) as DocumentReference;
+    String specie;
+    await documentReference.get().then((snapshot) {
+      specie = snapshot.data['specie'].toString();
+    });
+    return specie;
+  }
 
   // get user groups
   getUserGroups() async {
@@ -115,6 +119,18 @@ class DatabaseService {
     return Firestore.instance.collection("users").document(uid).snapshots();
   }
 
+    getUserAdminGroups(groupId) async {
+    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
+    return Firestore.instance.collection('groups').document(groupId).snapshots();
+  }
+
+
+
+  // get user groups
+ getAllGroups() async {
+    // return await Firestore.instance.collection("users").where('email', isEqualTo: email).snapshots();
+    return Firestore.instance.collection("groups").snapshots();
+  }
 
   // send message
   sendMessage(String groupId, chatMessageData) {

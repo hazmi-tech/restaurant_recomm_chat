@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group_chat_app/helper/helper_functions.dart';
+import 'package:group_chat_app/pages/All_consultaions.dart';
 import 'package:group_chat_app/pages/authenticate_page.dart';
 import 'package:group_chat_app/pages/chat_page.dart';
+import 'package:group_chat_app/pages/myconsultaions.dart';
+import 'package:group_chat_app/pages/order.dart';
 import 'package:group_chat_app/pages/profile_page.dart';
 import 'package:group_chat_app/pages/search_page.dart';
 import 'package:group_chat_app/services/auth_service.dart';
@@ -17,13 +20,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  // data
+int _selectedIndex = 3;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
   final AuthService _auth = AuthService();
   FirebaseUser _user;
   String _groupName;
   String _userName = '';
   String _email = '';
   Stream _groups;
+    String _city = '';
+
 
 
   // initState
@@ -49,7 +59,7 @@ class _HomePageState extends State<HomePage> {
             child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
           ),
           SizedBox(height: 20.0),
-          Text("You've not joined any group, tap on the 'add' icon to create a group or search for groups by tapping on the search button below."),
+          Text("ليس لديك أي طلبات استشارة"),
         ],
       )
     );
@@ -110,6 +120,12 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _email = value;
       });
+    });
+    DatabaseService(uid: _user.uid).getUserData(_email).then((snapshot) {
+      // print(snapshots);
+      setState(() {
+        _city= snapshot.documents[0].data['city'];
+        } );
     });
   }
 
@@ -175,65 +191,316 @@ class _HomePageState extends State<HomePage> {
   // Building the HomePage widget
   @override
   Widget build(BuildContext context) {
+    setState(() => context = context);
+     switch(_selectedIndex) {
+    case 0:
+Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage(userName: _userName, email: _email,city:_city)));});
+
+      break;
+
+    case 1:
+    Future.delayed(Duration.zero, () {
+Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyCons(),));});
+      break;
+
+    case 2:
+    Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AllCons()));});
+
+    break;
+
+        case 3:
+   break;
+  }
+  
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Groups', style: TextStyle(color: Colors.white, fontSize: 27.0, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.black87,
-        elevation: 0.0,
-        actions: <Widget>[
-          IconButton(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            icon: Icon(Icons.search, color: Colors.white, size: 25.0), 
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
-            }
-          )
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.symmetric(vertical: 50.0),
-          children: <Widget>[
-            Icon(Icons.account_circle, size: 150.0, color: Colors.grey[700]),
-            SizedBox(height: 15.0),
-            Text(_userName, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 7.0),
-            ListTile(
-              onTap: () {},
-              selected: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.group),
-              title: Text('Groups'),
+      appBar: PreferredSize(
+          child: ClipPath(
+            clipper: CustomAppBar(),
+            child: Container(
+              color: new Color(0xFFFF8046),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Text(
+                    'الرئيسية  ',
+                    style: TextStyle(color: Colors.white,
+                     
+                     fontSize: 25),
+                  ),
+                  Text(
+                    'شبكة اجتماعية لهواة الطعام',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
             ),
-            ListTile(
-              onTap: () {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage(userName: _userName, email: _email)));
-              },
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
-            ),
-            ListTile(
-              onTap: () async {
-                await _auth.signOut();
-                Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
-              },
-              contentPadding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-              leading: Icon(Icons.exit_to_app, color: Colors.red),
-              title: Text('Log Out', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        ),
-      ),
-      body: groupsList(),
+          ),
+          preferredSize: Size.fromHeight(kToolbarHeight + 100)),
+      body:SingleChildScrollView(
+child:body()) ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _popupDialog(context);
-        },
-        child: Icon(Icons.add, color: Colors.white, size: 30.0),
-        backgroundColor: Colors.grey[700],
+Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Order()));});
+ }   ,
+        child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
+        backgroundColor: Colors.white,
+        splashColor: Colors.grey,
         elevation: 0.0,
       ),
+       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      
+  bottomNavigationBar:navigationBar(),
+    );
+  }
+
+
+
+Widget body(){
+
+  return SingleChildScrollView(
+child:Column(
+// to apply margin in the main axis of the wrap
+  
+         children: <Widget>[
+           
+          Row( 
+            children:<Widget>[ 
+              Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
+              SizedBox(width: 40),
+              ButtonTheme(child:adBtn()),
+              SizedBox(width: 40),
+              ButtonTheme(child:reqConBtn()),
+         ]),
+         SizedBox(height:20 ),
+             Row( 
+            
+            children:<Widget>[ 
+              Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
+                SizedBox(width: 40),
+              ButtonTheme(child:consBtn()),
+              SizedBox(width: 40),
+              ButtonTheme( child:newconsBtn()),
+         ])
+         ],
+
+  ));
+}
+
+
+Widget reqConBtn(){
+  return ButtonTheme(
+         height: 120,
+  minWidth: 120,
+         child:  RaisedButton(
+             color:Colors.white,
+             shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20)
+  ),
+  child: new Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.add_comment,
+                        color:Colors.amber ,
+                        size: 30,),
+                         Padding(
+                            padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10),
+                            child: new Text(
+                              "استشير ",
+                              style: TextStyle(
+                                  fontSize: 15.0, fontWeight: FontWeight.bold),
+                            ))
+                        ]),
+             onPressed: (){
+
+Future.delayed(Duration.zero, () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Order()));});
+ },
+             ));
+}
+
+Widget consBtn(){
+  return ButtonTheme(
+         height: 120,
+  minWidth: 100,
+         child:  RaisedButton(
+             color:Colors.white,
+             shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20)
+  ),
+  child: new Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Image.asset(
+                          'assets/images/cons.png',
+                          height: 40.0,
+                          width: 40.0,
+                        ),
+                         Padding(
+                            padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10),
+                            child: new Text(
+                              "استشاراتي ",
+                              style: TextStyle(
+                                  fontSize: 15.0, fontWeight: FontWeight.bold),
+                            ))
+                        ]),
+             onPressed: (){
+Future.delayed(Duration.zero, () {
+Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyCons(),));});
+
+             },
+             ));
+}
+
+
+Widget newconsBtn(){
+  return ButtonTheme(
+         height: 120,
+  minWidth: 100,
+         child:  RaisedButton(
+             color:Colors.white,
+             shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20)
+  ),
+  child: new Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Image.asset(
+                          'assets/images/chat.png',
+                          height: 40.0,
+                          width: 40.0,
+                        ),
+              
+                         Padding(
+                            padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10),
+                            child: new Text(
+                              "طلبات \nالاستشارة",
+                              textAlign:TextAlign.center,
+                              style: TextStyle(
+
+                                  fontSize: 15.0, fontWeight: FontWeight.bold),
+                            ))
+                        ]),
+             onPressed: (){
+               
+Future.delayed(Duration.zero, () {
+Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => AllCons(),));});
+
+
+
+             },
+             ));
+}
+
+
+Widget adBtn(){
+  return ButtonTheme(
+         height: 120,
+  minWidth: 120,
+         child:  RaisedButton(
+             color:Colors.white,
+             shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20)
+  ),
+  child: new Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        new Image.asset(
+                          'assets/images/adbtn.png',
+                          height: 40.0,
+                          width: 40.0,
+                        ),
+                         Padding(
+                            padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10),
+                            child: new Text(
+                              "العروض ",
+                              style: TextStyle(
+                                  fontSize: 15.0, fontWeight: FontWeight.bold),
+                            ))
+                        ]),
+             onPressed: (){},
+             ));
+}
+
+
+
+  BottomNavigationBar navigationBar(){
+
+  return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: const <BottomNavigationBarItem>[
+          
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person
+            ),
+            label: 'الملف الشخصي',
+            
+          ),
+          BottomNavigationBarItem(
+          icon: Icon(Icons.restaurant),
+          label: 'استشاراتي',),
+
+                      BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'طلبات الاستشارة',
+
+            
+          ),
+                    BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'الرئيسية',
+          )
+          ,
+        ],
+        currentIndex:_selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        unselectedFontSize: 10,
+        selectedFontSize:10 ,
+        iconSize: 14,
+        onTap: _onItemTapped,
+      );
+}
+
+}
+
+
+class CustomAppBar extends CustomClipper<Path> {
+  @override
+  getClip(Size size) {
+    double height = size.height;
+    double width = size.width;
+    var path = Path();
+    path.lineTo(0, height - 50);
+    path.quadraticBezierTo(width / 2, height, width, height - 50);
+    path.lineTo(width, 0);
+    path.close();
+
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper oldClipper) {
+    return true;
+  }
+}
+
+ void onTabTapped(int index) {
+   
+  }
+
+
+class PlaceholderWidget extends StatelessWidget {
+  final Color color;
+
+  PlaceholderWidget(this.color);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: color,
     );
   }
 }

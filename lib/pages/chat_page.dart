@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:group_chat_app/services/database_service.dart';
 import 'package:group_chat_app/widgets/message_tile.dart';
+import 'package:group_chat_app/pages/chat.dart';
+
 
 class ChatPage extends StatefulWidget {
 
@@ -19,7 +21,7 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
   
   Stream<QuerySnapshot> _chats;
   TextEditingController messageEditingController = new TextEditingController();
@@ -74,64 +76,269 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.groupName, style: TextStyle(color: Colors.white)),
-        centerTitle: true,
-        backgroundColor: Colors.black87,
-        elevation: 0.0,
-      ),
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            _chatMessages(),
-            // Container(),
-            Container(
-              alignment: Alignment.bottomCenter,
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
-                color: Colors.grey[700],
-                child: Row(
+        appBar: AppBar(
+        elevation: 0.4,
+        iconTheme: IconThemeData(color: Colors.black),
+    backgroundColor: Colors.white,
+    title: Row(
+    children: <Widget>[
+    Container(
+    width: 40,
+    height: 40,
+    margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
+    child: CircleAvatar(
+    backgroundImage: NetworkImage('https://i.pravatar.cc/110'),
+    backgroundColor: Colors.grey[200],
+    minRadius: 30,
+    ),
+    ),
+    Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+    Text(
+    'محمد العيدروس',
+    style: TextStyle(color: Colors.black),
+    ),
+    Text(
+    'متصل الان',
+    style: TextStyle(
+    color: Colors.grey[400],
+    fontSize: 12,
+    ),
+    )
+
+    ],
+    ),
+            Column(
+              children: [
+                Padding(
+    padding: const EdgeInsets.all(28.0),
+    child: RaisedButton(
+    child: Text('الغاء الاستشارة'),
+    onPressed: () {
+    showAlertDialog(context);
+    },
+    ),
+    ),
+              ],
+            )
+    ],
+    ),
+    ),
+    body: Stack(
+    children: <Widget>[
+    Container(
+    color: Colors.white,
+    child: Column(
+    children: <Widget>[
+    Flexible(
+    child: ListView.builder(
+    itemCount: 1,
+    shrinkWrap: true,
+    itemBuilder: (BuildContext context, int index) {
+    return Padding(
+    padding: EdgeInsets.all(10),
+    child: Column(
+    children: <Widget>[
+    //Text(
+    //'11:12',
+    //style:
+    //TextStyle(color: Colors.grey, fontSize: 12),
+    //),
+    Bubble(
+    message: 'مطعم مأكولات بحرية فاخر عدد الأشخاص: 10 نوع المناسبة: اجتماع عمل، الاستلام في المطعم',
+    isMe: true,
+    ),
+    Bubble(
+    message: 'أهلاً معك محمد العيدروس، مطعم توينا أكثر مطعم بحري مناسب لهذا النوع من المناسبات، هادئ وراقي',
+    isMe: false,
+    ),
+    //Text(
+    //'Feb 25, 2018',
+    //style:
+    //TextStyle(color: Colors.grey, fontSize: 12),
+    //),
+    Bubble(
+    message: 'تسلم الله يعطيك العافية',
+    isMe: true,
+    ),
+    Bubble(
+    message: 'ولو في الخدمة، عليكم بالعافية',
+    isMe: false,
+    ),
+    ],
+
+    ),
+    );
+    },
+    ),
+    ),
+    ],
+    ),
+    ),
+      Positioned(
+        bottom: 0,
+        left: 0,
+        width: MediaQuery.of(context).size.width,
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(color: Colors.white, boxShadow: [
+            BoxShadow(
+              color: Colors.grey[300],
+              offset: Offset(-2, 0),
+              blurRadius: 5,
+            ),
+          ]),
+          child: Row(
+            children: <Widget>[
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.camera,
+                  color: Color(0xff3E8DF3),
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.image,
+                  color: Color(0xff3E8DF3),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 15),
+              ),
+              Expanded(
+                child: TextFormField(
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    hintText: 'ارسال',
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.send,
+                  color: Color(0xff3E8DF3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+    ],
+    ),
+    );
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("الغاء"),
+      onPressed:  () {},
+    );
+    Widget continueButton = FlatButton(
+      child: Text("تراجع"),
+      onPressed:  () {Navigator.pop(context);},
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("الغاء الاستشارة"),
+      content: Text("هل أنت متأكد من رغبتك بإلغاء الاستشارة؟"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+}
+
+class Bubble extends StatelessWidget {
+  final bool isMe;
+  final String message;
+
+  Bubble({this.message, this.isMe});
+
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: isMe ? EdgeInsets.only(left: 40) : EdgeInsets.only(right: 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  gradient: isMe
+                      ? LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      stops: [
+                        0.1,
+                        1
+                      ],
+                      colors: [
+                        Color(0xFFFDA085),
+                        Color(0xFFFDA085),
+                      ])
+                      : LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      stops: [
+                        0.1,
+                        1
+                      ],
+                      colors: [
+                        Color(0xFFEBF5FC),
+                        Color(0xFFEBF5FC),
+                      ]),
+                  borderRadius: isMe
+                      ? BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(0),
+                    bottomLeft: Radius.circular(15),
+                  )
+                      : BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    topLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                    bottomLeft: Radius.circular(0),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment:
+                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: messageEditingController,
-                        style: TextStyle(
-                          color: Colors.white
-                        ),
-                        decoration: InputDecoration(
-                          hintText: "Send a message ...",
-                          hintStyle: TextStyle(
-                            color: Colors.white38,
-                            fontSize: 16,
-                          ),
-                          border: InputBorder.none
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(width: 12.0),
-
-                    GestureDetector(
-                      onTap: () {
-                        _sendMessage();
-                      },
-                      child: Container(
-                        height: 50.0,
-                        width: 50.0,
-                        decoration: BoxDecoration(
-                          color: Colors.blueAccent,
-                          borderRadius: BorderRadius.circular(50)
-                        ),
-                        child: Center(child: Icon(Icons.send, color: Colors.white)),
+                    Text(
+                      message,
+                      textAlign: isMe ? TextAlign.end : TextAlign.start,
+                      style: TextStyle(
+                        color: isMe ? Colors.white : Colors.grey,
                       ),
                     )
                   ],
                 ),
               ),
-            )
-          ],
-        ),
+            ],
+          )
+        ],
       ),
     );
   }

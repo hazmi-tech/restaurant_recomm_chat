@@ -22,6 +22,30 @@ class DatabaseService {
     });
   }
 
+    Future updateUserName( String fullName) async {
+    return await userCollection.document(uid).updateData({
+      'fullName': fullName,
+    });
+  }
+
+      Future updateUserCity( String city) async {
+    return await userCollection.document(uid).updateData({
+      'city': city,
+    });
+  }
+    Future updateUserEmail( String email) async {
+    return await userCollection.document(uid).updateData({
+      'email': email,    });
+  }
+
+  
+
+
+
+
+
+  
+
 
   // create group
   Future createGroup(String userName, String groupName) async {
@@ -76,6 +100,10 @@ class DatabaseService {
     }
   }
 
+
+updateGroupMembers(List<dynamic> member, groupId ){
+  Firestore.instance.collection('groups').document(groupId).updateData({"members": FieldValue.arrayUnion(member)});
+}
 
   // has user joined the group
   Future<bool> isUserJoined(String groupId, String groupName, String userName) async {

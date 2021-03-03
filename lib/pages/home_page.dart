@@ -125,7 +125,8 @@ int _selectedIndex = 3;
       // print(snapshots);
       setState(() {
         _city= snapshot.documents[0].data['city'];
-        } );
+        _userName = snapshot.documents[0].data['fullName'];
+        _email=snapshot.documents[0].data['email'];        } );
     });
   }
 
@@ -195,7 +196,7 @@ int _selectedIndex = 3;
      switch(_selectedIndex) {
     case 0:
 Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage(userName: _userName, email: _email,city:_city)));});
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage()));});
 
       break;
 
@@ -421,7 +422,18 @@ Widget adBtn(){
                                   fontSize: 15.0, fontWeight: FontWeight.bold),
                             ))
                         ]),
-             onPressed: (){},
+             onPressed: (){
+               
+                   showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          content: Text('قريباً' , textAlign: TextAlign.center,));
+      },
+    );
+             },
              ));
 }
 

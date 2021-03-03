@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:group_chat_app/pages/intro_slider.dart';
-import 'package:intro_slider/intro_slider.dart';
+import 'package:group_chat_app/pages/home_page.dart';
 
 class SplashScreen extends StatefulWidget {
+  final bool _logeddIn;
+  SplashScreen(this._logeddIn); 
   final Color backgroundColor = new Color(0xFFF48858);
   final TextStyle styleTextUnderTheLoader = TextStyle(
       fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black);
@@ -13,8 +16,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
-  String _versionName = 'V1.0';
   final splashDelay = 5;
 
   @override
@@ -30,15 +31,17 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigationPage() {
+     bool  isloggedin= widget._logeddIn;
+    if( !isloggedin)
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Introduction()));
+    else
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
   }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      body: Container(
-       color: new Color(0xFFF48858),
+    return Container(
+       color: new Color(0xFFFF8046)
+,
       child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
@@ -48,12 +51,13 @@ class _SplashScreenState extends State<SplashScreen> {
                 Expanded(
                   flex: 7,
                   child: Container(
-                    color: new Color(0xFFF48858),
+                    color:new Color(0xFFFF8046)
+,
                       child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Image.asset(
-                        'assets/images/rest-log-wh.PNG',
+                        'assets/images/rest-log-wh.jpeg',
                         height: 300,
                         width: 300,
                       ),
@@ -66,9 +70,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      CircularProgressIndicator(),
+                      CircularProgressIndicator(
+                        valueColor: new AlwaysStoppedAnimation<Color>(Colors.white)
+                      ),
                       Container(
-                        color: new Color(0xFFF48858),
+                        color: new Color(0xFFFF8046)
+,
                         height: 10,
                       ),
                       
@@ -79,7 +86,6 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

@@ -32,8 +32,8 @@ class IntroductionState extends State<Introduction> {
   void addScreens() {
     slides.add(
       Slide(
-        title: 'اكتشف أفضل المطاعم من حولك',
-        description: 'نساعدك على اكتشاف المطاعم المتميزة في منطقتك',
+        title: 'اكتشف أحلى \n المطاعم من حولك',
+        description: 'نساعدك على اكتشاف الذ \n وجبات المطاعم من حولك',
         backgroundColor: Colors.white,
         pathImage: 'assets/images/screen-one.png',
         styleTitle: TextStyle(
@@ -49,14 +49,14 @@ class IntroductionState extends State<Introduction> {
     );
     slides.add(
       Slide(
-        title: 'شبكة اجتماعية لهواة الطعام',
-        description: 'نمكن هواة الطعام من التواصل مع بعضهم البعض والحصول على اخر اخبار العروض والمطاعم الجديدة',
+        title: 'شبكة اجتماعية \n لخبراء المطاعم',
+        description: 'أفضل مكان لمشاركة الآراء وأذواق المطاعم والوجبات ',
         backgroundColor: new Color(0xFFF48858),
         pathImage: 'assets/images/screen-two.png',
         styleTitle: 
         TextStyle(
           color: Colors.white,
-          fontSize: 20,
+          fontSize: 30,
           fontWeight: FontWeight.bold
         ),
         styleDescription: TextStyle(
@@ -68,7 +68,7 @@ class IntroductionState extends State<Introduction> {
     slides.add(
       Slide(
         title: '!ودع الحيرة',
-        description: 'تطبيقنا لا يعتمد على الاقتراحات الآلية، تواصل مباشرة مع خبراء الطعام في المنطقة واحصل على اقتراحات مخصصة لك وحدك',
+        description: 'لا تضيع وقت تدور وتقرأ تقييمات! \n تواصل مباشرة مع خبراء المطاعم حولك\n واحصل على اقتراحات مضبوطة لك وحدك.',
         pathImage: 'assets/images/screen-three.png',
         styleTitle: TextStyle(
           color: Colors.white,

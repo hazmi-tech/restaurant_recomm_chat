@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group_chat_app/helper/helper_functions.dart';
@@ -8,15 +10,9 @@ import 'package:group_chat_app/pages/All_consultaions.dart';
 import 'package:group_chat_app/pages/myconsultaions.dart';
 import 'package:group_chat_app/services/auth_service.dart';
 import 'package:group_chat_app/services/database_service.dart';
-import 'package:group_chat_app/widgets/group_tile.dart';
 
 class ProfilePage extends StatefulWidget {
 
-  final String userName;
-  final String email;
-  final String city;
-
-  ProfilePage({this.userName, this.email,this.city});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -27,7 +23,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
    int _selectedIndex=0;
 
-
+  void initState() {
+    super.initState();
+    _getUserAuthAndJoinedGroups();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,15 +35,47 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   String _groupName;
+  String _userName='';
   String _city='';
-
+   String _email='';
+  String _pass='';
 
 
   Stream _groups;
 
 
+
  FirebaseUser _user;
 
+
+
+
+  _getUserAuthAndJoinedGroups() async {
+    _user = await FirebaseAuth.instance.currentUser();
+    await HelperFunctions.getUserNameSharedPreference().then((value) {
+      setState(() {
+        _userName = value;
+      });
+    });
+    DatabaseService(uid: _user.uid).getUserGroups().then((snapshots) {
+      // print(snapshots);
+      setState(() {
+        _groups = snapshots;
+      });
+    });
+    await HelperFunctions.getUserEmailSharedPreference().then((value) {
+      setState(() {
+        _email = value;
+      });
+    });
+    DatabaseService(uid: _user.uid).getUserData(_email).then((snapshot) {
+      // print(snapshots);
+      setState(() {
+        _city= snapshot.documents[0].data['city'];
+        _userName = snapshot.documents[0].data['fullName'];
+        _email=snapshot.documents[0].data['email'];        } );
+    });
+  }
   String _destructureId(String res) {
     // print(res.substring(0, res.indexOf('_')));
     return res.substring(0, res.indexOf('_'));
@@ -55,37 +86,91 @@ class _ProfilePageState extends State<ProfilePage> {
     return res.substring(res.indexOf('_') + 1);
   }
 
-  void _popupDialog(BuildContext context) {
+
+AlertDialog passAlert(newEmail){
+  return  AlertDialog(
+      shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+      title: Text(" قم بإدخال كلمة المرور "
+      ,textAlign:TextAlign.right ,),
+       content: Row(
+         children: <Widget> 
+       [  
+
+         Container(
+           height: 60,
+           width: 200,
+           child:TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'أدخل كلمة المرور',
+                      ),
+                      autofocus: false,
+                      obscureText: true,
+                      onSubmitted:(pass) async {
+          final  user = await FirebaseAuth.instance.currentUser();
+          final result = await InternetAddress.lookup('google.com');
+      
+           try {
+                    String userId  = (await FirebaseAuth.instance.currentUser()).uid;
+             if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+               AuthResult authResult = await user.reauthenticateWithCredential(
+  EmailAuthProvider.getCredential(email: user.email ,password:pass),);
+                authResult.user.updateEmail(newEmail);
+                DatabaseService(uid: userId ).updateUserEmail(newEmail);
+                Text('تم التحديث ينجاح');
+                  await _auth.signOut();
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => AuthenticatePage()), (Route<dynamic> route) => false);
+                }
+                } catch (e) {
+                  Text('كلمة المرور خاطئة');
+                  print(e);}
+          }
+
+                      ,
+                      ),)
+                      
+                    ]),
+    );
+}
+  void _popupDialog(BuildContext context, String newUserName, String newEmail, String newCity) {
     Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
+      child: Text("الغاء"),
       onPressed:  () {
         Navigator.of(context).pop();
       },
     );
     Widget createButton = FlatButton(
-      child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-          await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-          });
-          Navigator.of(context).pop();
-        }
+      child: Text("تحديث"),
+      onPressed:  ()  async {
+       String userId  = (await FirebaseAuth.instance.currentUser()).uid;
+          if(newUserName!=null)
+          await DatabaseService(uid: userId).updateUserName(newUserName);
+
+          if(newCity!=null)
+           await DatabaseService(uid: userId ).updateUserCity(newCity);
+
+          if(newEmail!=null){
+              return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return passAlert(newEmail);
       },
     );
 
+        }
+        
+
+                 Navigator.of(context).pop(); 
+      },
+      
+    );
+
     AlertDialog alert = AlertDialog(
-      title: Text("Create a group"),
-      content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
+      shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+      title: Text("هل تريد تحديث بياناتك؟"
+      ,textAlign:TextAlign.right ,),
       actions: [
         cancelButton,
         createButton,
@@ -130,13 +215,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return   Scaffold(
       appBar: PreferredSize(
           child: header(),
-          preferredSize: Size.fromHeight(kToolbarHeight +240)),
+          preferredSize: Size.fromHeight(kToolbarHeight +190)),
 
           body: body(),
  
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _popupDialog(context);
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,
@@ -150,7 +234,6 @@ class _ProfilePageState extends State<ProfilePage> {
   
   }
 Widget header(){
-String _userName = widget.userName;
 
  return  ClipPath(
             clipper: CustomAppBar(),
@@ -171,12 +254,12 @@ String _userName = widget.userName;
                     style: TextStyle(color: Colors.white,
                     
                      
-                     fontSize: 35),
+                     fontSize: 30),
     
                   )
                   
                   ),
-              Icon(Icons.account_circle, size: 150.0, color: Colors.white),
+              Icon(Icons.account_circle, size: 130.0, color: Colors.white),
           
 GestureDetector(
   onTap: () async {
@@ -192,12 +275,13 @@ GestureDetector(
 }
 
 Widget body(){
-    String _userName = widget.userName;
+ 
+  String _newUserName ;
+  String _newEmail ;
+  String _newCity;
 
-  String _email =widget.email;
-  String _city=widget.city;
 
-  
+  bool editprofile=false;
   return SingleChildScrollView(
     reverse: true,
 child: Container(
@@ -212,7 +296,11 @@ Container(
                     padding: EdgeInsets.fromLTRB(10,10,10,10),
                     height: 60,
                     width: 200,
+                    
                     child: TextField(
+                            onChanged:(text) {
+                            _newUserName=text;
+                            editprofile=true;} ,
                     textAlignVertical:TextAlignVertical.center,
                     textAlign:TextAlign.center,
                   decoration: InputDecoration(
@@ -235,6 +323,13 @@ Container(
                     height: 60,
                     width: 200,
                     child: TextField(
+                    onTap: () {
+
+
+                    },
+                    onChanged:(text) {
+                      _newEmail=text;
+                editprofile=true;} ,
                     textAlignVertical:TextAlignVertical.center,
                     textAlign:TextAlign.center,
                   decoration: InputDecoration(
@@ -259,6 +354,9 @@ Container(
                     height: 60,
                     width: 200,
                     child: TextField(
+                          onChanged:(text) {
+                          _newCity=text;
+                editprofile=true;} ,
                     textAlignVertical:TextAlignVertical.center,
                     textAlign:TextAlign.center,
                   decoration: InputDecoration(
@@ -275,9 +373,29 @@ Container(
                   Text('المدينة', style: TextStyle(fontSize: 17.0)),
                 
                 ],
-              )
+              ),
+            
+             Row(
+
+              children:[
+                SizedBox(width: 60,),
+                RaisedButton(
+            color: Colors.yellow[700],
+            shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(18.0),
+),
+            onPressed :() {
+            if(!editprofile) 
+            ;
+            else
+             _popupDialog(context,_newUserName,_newEmail,_newCity);},
+            child:  Text('حدث معلوماتك', style: TextStyle(
+              fontSize: 14,
+              color: Colors.white
+            )),
+          )]),
               
-              ,],)
+              ],)
               ),
              
             ],
@@ -321,6 +439,7 @@ Container(
       );
 }
 }
+
 
 
 

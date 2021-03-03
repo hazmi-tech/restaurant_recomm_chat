@@ -71,16 +71,20 @@ int _selectedIndex = 1;
       )
     );
   }
-getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
+getExpenseItems(bool joined, AsyncSnapshot<QuerySnapshot> snapshot) {
     return snapshot.data.documents
         .map((doc) =>GestureDetector(
       onTap: (){
         Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: doc['groupId'], userName:_userName, groupName: doc['groupName'],)));
       },
-      child: Container(
+      child:Container(
+        child:Column(children: <Widget>[
+
+          if (joined==false)
+       Container(
+        
          padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0)
          ,child: ListTile(
-
           title:  Text(doc['groupName'],
           textAlign: TextAlign.end
           , style: TextStyle(fontWeight: FontWeight.bold)),
@@ -93,25 +97,45 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
             child: Text(doc['groupName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
           ),
         ),)
-        )).toList();
+        ,if (doc['admin']!=this._user.uid && joined==true)
+       Container(
+        
+         padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0)
+         ,child: ListTile(
+          title:  Text(doc['groupName'],
+          textAlign: TextAlign.end
+          , style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text("اضغط للحصول على التفاصيل",
+          textAlign: TextAlign.end,
+           style: TextStyle(fontSize: 13.0)),
+          trailing:CircleAvatar(
+            radius: 30.0,
+            backgroundColor: Colors.amber[900],
+            child: Text(doc['groupName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
+          ),
+        ),)
+        ])
+        ))).toList();
   }
 
   Widget groupsList() {
+    bool joined=false;
     return StreamBuilder<QuerySnapshot>(
         stream: Firestore.instance.collection("groups").where('admin', isEqualTo: this._user.uid).where('isClosed', isEqualTo: false).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return new Center (child: Text("لم تقم بطرح أي استشارات"));
-          return new ListView(children: getExpenseItems(snapshot));
+          return new ListView(children: getExpenseItems(joined,snapshot));
          }
     );
   }
 
   Widget joindgroupsList() {
+    bool joined=true;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("groups").where('members' ,arrayContains: this._user.uid+'_'+this._userName).where('isClosed', isEqualTo: false).snapshots(),
+        stream: Firestore.instance.collection("groups").where('members' ,arrayContains: this._user.uid).where('isClosed', isEqualTo: false).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return new Center (child: Text("لم تقم باستقبال أي استشارات"));
-          return new ListView(children: getExpenseItems(snapshot));
+          return new ListView(children: getExpenseItems(joined,snapshot));
          }
     );
   }
@@ -136,11 +160,12 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
         _email = value;
       });
     });
-        await  DatabaseService(uid: _user.uid).getUserData(_email).then((snapshot) {
+    DatabaseService(uid: _user.uid).getUserData(_email).then((snapshot) {
       // print(snapshots);
       setState(() {
         _city= snapshot.documents[0].data['city'];
-        } );
+        _userName = snapshot.documents[0].data['fullName'];
+        _email=snapshot.documents[0].data['email'];        } );
     });
   }
 
@@ -210,7 +235,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
      switch(_selectedIndex) {
     case 0:
 Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage(userName: _userName, email: _email,city:_city)));});
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ProfilePage()));});
 
       break;
 

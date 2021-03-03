@@ -50,7 +50,7 @@ class IntroductionState extends State<Introduction> {
     slides.add(
       Slide(
         title: 'شبكة اجتماعية \n لخبراء المطاعم',
-        description: 'أفضل مكان لمشاركة الآراء وأذواق المطاعم والوجبات ',
+        description: 'أفضل مكان لمشاركة الآراء \nوأذواق المطاعم والوجبات ',
         backgroundColor: new Color(0xFFF48858),
         pathImage: 'assets/images/screen-two.png',
         styleTitle: 

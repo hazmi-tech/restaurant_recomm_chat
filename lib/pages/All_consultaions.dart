@@ -24,7 +24,13 @@ TabController tabController;
 final selectedColor = Colors.red;
 int currentTab;
 int _selectedIndex = 2;
+int selectedRadio = 0;
 
+setSelectedRadio(int val) {
+  setState(() {
+    selectedRadio = val;
+  });
+}
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -68,7 +74,44 @@ int _selectedIndex = 2;
       )
     );
   }
+List<String> city=['جدة','الرياض','مكة'];
+    String _chosenValue;
 
+DropdownButton locationWidget() {
+    String _chosenValue;
+  return DropdownButton<String>(
+            value: _chosenValue,
+            //elevation: 5,
+            style: TextStyle(color: Colors.black),
+
+            items: <String>[
+              'Android',
+              'IOS',
+              'Flutter',
+              'Node',
+              'Java',
+              'Python',
+              'PHP',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            hint: Text(
+              "Please choose a langauage",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600),
+            ),
+            onChanged: (String value) {
+              setState(() {
+                _chosenValue = value;
+              });
+            },
+          );
+  }
 getMembers(DocumentSnapshot doc){
 
 List<String> members = List.from(doc['members']);
@@ -252,7 +295,7 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
     return Scaffold(
       appBar: PreferredSize(
           child:header()         
-          , preferredSize: Size.fromHeight(kToolbarHeight + 100)),
+          , preferredSize: Size.fromHeight(kToolbarHeight + 110)),
       body:body() ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -282,17 +325,51 @@ Widget header(){
                
               
                 children: <Widget>[
+                  Row( children: <Widget> [
+      
+                   Padding(
+                     padding: EdgeInsets.only(left:20),
+                    child:DropdownButton<String>(
+                  icon:Icon(Icons.location_pin,
+                  size:30 ,
+                  color: Colors.white), 
+            value: _chosenValue,
+            //elevation: 5,
+            style: TextStyle(color: Colors.black),
+
+            items: <String>[
+              'جدة',
+              'الرياض',
+              'مكة',
+              'المدينة',
+              'أبها',
+              'الطايف',
+              'ينبع',
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String value) {
+              setState(() {
+                print(value);
+                _chosenValue = value;
+                _city=value;
+              });
+            },
+          )),
                   Padding(
-                  padding: EdgeInsets.only(left:120 ),
+                  padding: EdgeInsets.only(left:70 ),
                   child:Text(
                     'أحدث الاستشارات ',
                     textAlign: TextAlign.justify,
                     style: TextStyle(color: Colors.white,
                     
-                     
+
                      fontSize: 25),
     
-                  )),
+                  ))]),
                   Padding(
                   padding: EdgeInsets.only(left:120 ),
                   child:Text(

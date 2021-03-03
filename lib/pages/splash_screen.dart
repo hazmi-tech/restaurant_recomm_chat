@@ -58,8 +58,8 @@ class _SplashScreenState extends State<SplashScreen> {
                     children: <Widget>[
                       Image.asset(
                         'assets/images/rest-log-wh.jpeg',
-                        height: 300,
-                        width: 300,
+                        height: 200,
+                        width: 200,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),

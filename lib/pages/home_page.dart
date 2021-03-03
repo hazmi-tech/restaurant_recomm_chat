@@ -271,7 +271,7 @@ child:Column(
           Row( 
             children:<Widget>[ 
               Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
-              SizedBox(width: 40),
+              SizedBox(width:20),
               ButtonTheme(child:adBtn()),
               SizedBox(width: 40),
               ButtonTheme(child:reqConBtn()),
@@ -281,7 +281,7 @@ child:Column(
             
             children:<Widget>[ 
               Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
-                SizedBox(width: 40),
+                SizedBox(width: 20),
               ButtonTheme(child:consBtn()),
               SizedBox(width: 40),
               ButtonTheme( child:newconsBtn()),

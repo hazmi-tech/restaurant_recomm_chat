@@ -336,10 +336,14 @@ Widget body(){
             Container(
               height: 45,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(
                   25.0,
                 ),
+                border: Border.all(
+      color: Colors.amber, //                   <--- border color
+      width: 1.0,
+    ),
               ),
               child: TabBar(
                 controller: tabController,

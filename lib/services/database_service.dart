@@ -48,10 +48,14 @@ class DatabaseService {
 
 
   // create group
-  Future createGroup(String userName, String groupName) async {
+  Future createGroup(String userName, String groupName,String city,String budget,String people) async {
     DocumentReference groupDocRef = await groupCollection.add({
       'groupName': groupName,
       'groupIcon': '',
+      'isClosed':false,
+      'city':city,
+      'budget':double.parse(budget),
+      'people':int.parse(people),
       'admin': uid,
       'members': [],
       //'messages': ,

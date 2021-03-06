@@ -45,61 +45,9 @@ int _selectedIndex = 3;
 
 
   // widgets
-  Widget noGroupWidget() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              _popupDialog(context);
-            },
-            child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
-          ),
-          SizedBox(height: 20.0),
-          Text("ليس لديك أي طلبات استشارة"),
-        ],
-      )
-    );
-  }
+  
 
 
-
-  Widget groupsList() {
-    return StreamBuilder(
-      stream: _groups,
-      builder: (context, snapshot) {
-        if(snapshot.hasData) {
-          if(snapshot.data['groups'] != null) {
-            // print(snapshot.data['groups'].length);
-            if(snapshot.data['groups'].length != 0) {
-              return ListView.builder(
-                itemCount: snapshot.data['groups'].length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  int reqIndex = snapshot.data['groups'].length - index - 1;
-                  return GroupTile(userName: snapshot.data['fullName'], groupId: _destructureId(snapshot.data['groups'][reqIndex]), groupName: _destructureName(snapshot.data['groups'][reqIndex]));
-                }
-              );
-            }
-            else {
-              return noGroupWidget();
-            }
-          }
-          else {
-            return noGroupWidget();
-          }
-        }
-        else {
-          return Center(
-            child: CircularProgressIndicator()
-          );
-        }
-      },
-    );
-  }
 
 
   // functions
@@ -142,51 +90,6 @@ int _selectedIndex = 3;
     return res.substring(res.indexOf('_') + 1);
   }
 
-
-  void _popupDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget createButton = FlatButton(
-      child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-          await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-          });
-          Navigator.of(context).pop();
-        }
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text("Create a group"),
-      content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
-      actions: [
-        cancelButton,
-        createButton,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
 
 
   // Building the HomePage widget
@@ -244,8 +147,7 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
 child:body()) ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Order()));});
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
  }   ,
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,

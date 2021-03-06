@@ -8,6 +8,7 @@ import 'package:group_chat_app/pages/authenticate_page.dart';
 import 'package:group_chat_app/pages/home_page.dart';
 import 'package:group_chat_app/pages/All_consultaions.dart';
 import 'package:group_chat_app/pages/myconsultaions.dart';
+import 'package:group_chat_app/pages/order.dart';
 import 'package:group_chat_app/services/auth_service.dart';
 import 'package:group_chat_app/services/database_service.dart';
 
@@ -221,6 +222,8 @@ AlertDialog passAlert(newEmail){
  
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+           Navigator.push(context, MaterialPageRoute(builder: (context) => Order()));
+
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,

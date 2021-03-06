@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:group_chat_app/helper/helper_functions.dart';
 import 'package:group_chat_app/pages/dropdown_formfield.dart';
+import 'package:group_chat_app/services/database_service.dart';
 
 
 class Order extends StatefulWidget {
+  final String uid;
+  final String city;
+
+  const Order({Key key, this.uid, this.city}) : super(key: key);
   @override
   OrderState createState() {
     return OrderState();
@@ -11,6 +18,10 @@ class Order extends StatefulWidget {
 
 class OrderState extends State<Order>
     with SingleTickerProviderStateMixin {
+  String _budget;
+  String _people;
+  String _dist;
+  String _cusine;
   String _myActivity;
   String _myActivityResult;
   String _myActivity2;
@@ -21,6 +32,8 @@ class OrderState extends State<Order>
   final formKey2 = new GlobalKey<FormState>();
   final formKey3 = new GlobalKey<FormState>();
   double _animatedHeight = 10.0;
+
+  String _disc;
   @override
   void initState() {
     super.initState();
@@ -105,6 +118,9 @@ class OrderState extends State<Order>
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32)))),
+              onChanged:(disc) {
+                _disc=disc;
+              },
               ),
             ),
         Container(
@@ -121,12 +137,12 @@ class OrderState extends State<Order>
                 value: _myActivity,
                 onSaved: (value) {
                   setState(() {
-                    _myActivity = value;
+                    _dist = value;
                   });
                 },
                 onChanged: (value) {
                   setState(() {
-                    _myActivity = value;
+                    _dist = value;
                   });
                 },
                 dataSource: [
@@ -385,12 +401,12 @@ class OrderState extends State<Order>
     value: _myActivity2,
     onSaved: (value) {
     setState(() {
-    _myActivity2 = value;
+    _cusine = value;
     });
     },
     onChanged: (value) {
     setState(() {
-    _myActivity2 = value;
+     _cusine  = value;
     });
     },
     dataSource: [
@@ -486,10 +502,14 @@ class OrderState extends State<Order>
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(32)))),
+                        onChanged: (value){
+                          _people=value;
+
+                        },
               ),
         ),
       Text(
-        'الميزانية',
+        'الميزانية لكل فرد',
         style: TextStyle(color: Colors.black),
       ),
           Container(
@@ -499,6 +519,10 @@ class OrderState extends State<Order>
               decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(32)))),
+                onChanged: (value){
+                          _budget=value ;
+                        },
+            
             ),
     ),
 
@@ -592,25 +616,23 @@ class OrderState extends State<Order>
           ),
         ),
 
-          Container(
-            width: 200,
-            height: 40,
-            margin: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-                color:Color(0xffff8046),
-                borderRadius: BorderRadius.all(Radius.circular(50))
-            ),
-            child: Center(
-              child: Text(
-                'ارسال',
-                style: TextStyle(color: Colors.white,
-                    fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
-          ) ,
-   ],
-    ),
+          RaisedButton(
+            color: Colors.yellow[700],
+            shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(18.0),
+),
+            onPressed :() async {
+              String userId  = (await FirebaseAuth.instance.currentUser()).uid;
+await HelperFunctions.getUserNameSharedPreference().then((val) {
+            DatabaseService(uid:  userId).createGroup(val, _disc,this.widget.city,_budget,_people);
+                     Navigator.of(context).pop();
+});
+},
+            child:  Text('ارسال', style: TextStyle(
+              fontSize: 14,
+              color: Colors.white
+            )),
+          )]),
 
     ),
       ),

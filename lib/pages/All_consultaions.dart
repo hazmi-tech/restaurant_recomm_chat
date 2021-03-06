@@ -8,6 +8,7 @@ import 'package:group_chat_app/pages/authenticate_page.dart';
 import 'package:group_chat_app/pages/chat_page.dart';
 import 'package:group_chat_app/pages/home_page.dart';
 import 'package:group_chat_app/pages/myconsultaions.dart';
+import 'package:group_chat_app/pages/order.dart';
 import 'package:group_chat_app/pages/profile_page.dart';
 import 'package:group_chat_app/pages/search_page.dart';
 import 'package:group_chat_app/services/auth_service.dart';
@@ -54,64 +55,9 @@ setSelectedRadio(int val) {
 
 
 
-  // widgets
-  Widget noGroupWidget() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              _popupDialog(context);
-            },
-            child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
-          ),
-          SizedBox(height: 20.0),
-          Text("ليس لديك أي طلبات استشارة"),
-        ],
-      )
-    );
-  }
-List<String> city=['جدة','الرياض','مكة'];
     String _chosenValue;
 
-DropdownButton locationWidget() {
-    String _chosenValue;
-  return DropdownButton<String>(
-            value: _chosenValue,
-            //elevation: 5,
-            style: TextStyle(color: Colors.black),
 
-            items: <String>[
-              'Android',
-              'IOS',
-              'Flutter',
-              'Node',
-              'Java',
-              'Python',
-              'PHP',
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            hint: Text(
-              "Please choose a langauage",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600),
-            ),
-            onChanged: (String value) {
-              setState(() {
-                _chosenValue = value;
-              });
-            },
-          );
-  }
 getMembers(DocumentSnapshot doc){
 
 List<String> members = List.from(doc['members']);
@@ -149,7 +95,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
           title:  Text(doc['groupName'],
           textAlign: TextAlign.end
           , style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text("اضغط للحصول على التفاصيل ",
+          subtitle: Text(" عدد الأشخاص:"+doc['people'].toString()+" "+" الميزانية: "+doc['budget'].toString(),
           textAlign: TextAlign.end,
            style: TextStyle(fontSize: 13.0)),
           trailing:CircleAvatar(
@@ -157,11 +103,15 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
             backgroundColor: Colors.amber[900],
             child: Text(doc['groupName'].substring(0, 1).toUpperCase(), textAlign: TextAlign.center, style: TextStyle(color: Colors.white)),
           ),
-        ),)
-
+        )
+        )
 ])
-        ))).toList();
+        )
         
+        )
+        ).toList();  
+        
+            
   }
 
   Widget groupsList() {
@@ -171,7 +121,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
           
           if (!snapshot.hasData) return Center(
             child: CircularProgressIndicator( valueColor: new AlwaysStoppedAnimation<Color>(Colors.amber),), );
-          return new ListView(children: getExpenseItems(snapshot));
+          return  new ListView(children: getExpenseItems(snapshot));
          }
     );
   }
@@ -218,50 +168,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
   }
 
 
-  void _popupDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget createButton = FlatButton(
-      child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-          await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-          });
-          Navigator.of(context).pop();
-        }
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text("Create a group"),
-      content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
-      actions: [
-        cancelButton,
-        createButton,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
+  
 
 
   // Building the HomePage widget
@@ -299,7 +206,7 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
       body:body() ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _popupDialog(context);
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,
@@ -387,6 +294,7 @@ Widget body(){
 
   return  Row(
           children: <Widget>[
+
            Expanded(child:  groupsList())]);
 }
 

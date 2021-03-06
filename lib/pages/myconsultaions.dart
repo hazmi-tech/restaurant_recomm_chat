@@ -52,25 +52,7 @@ int _selectedIndex = 1;
 
 
   // widgets
-  Widget noGroupWidget() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 25.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              _popupDialog(context);
-            },
-            child: Icon(Icons.add_circle, color: Colors.grey[700], size: 75.0)
-          ),
-          SizedBox(height: 20.0),
-          Text("ليس لديك أي طلبات استشارة"),
-        ],
-      )
-    );
-  }
+
 getExpenseItems(bool joined, AsyncSnapshot<QuerySnapshot> snapshot) {
     return snapshot.data.documents
         .map((doc) =>GestureDetector(
@@ -182,52 +164,6 @@ getExpenseItems(bool joined, AsyncSnapshot<QuerySnapshot> snapshot) {
   }
 
 
-  void _popupDialog(BuildContext context) {
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget createButton = FlatButton(
-      child: Text("Create"),
-      onPressed:  () async {
-        if(_groupName != null) {
-          await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid: _user.uid).createGroup(val, _groupName);
-          });
-          Navigator.of(context).pop();
-        }
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text("Create a group"),
-      content: TextField(
-        onChanged: (val) {
-          _groupName = val;
-        },
-        style: TextStyle(
-          fontSize: 15.0,
-          height: 2.0,
-          color: Colors.black             
-        )
-      ),
-      actions: [
-        cancelButton,
-        createButton,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-
   // Building the HomePage widget
   @override
   Widget build(BuildContext context) {
@@ -259,9 +195,8 @@ Future.delayed(Duration.zero, () {
       body:body() ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
 
-Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Order()));});
  }        ,
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,

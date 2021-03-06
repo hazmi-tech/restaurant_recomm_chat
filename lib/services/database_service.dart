@@ -59,16 +59,23 @@ class DatabaseService {
       'admin': uid,
       'members': [],
       //'messages': ,
-      'groupId': '',
+      'groupId':'',
       'recentMessage': '',
       'recentMessageSender': ''
-    });
-
+    }
+        );
+    
+    groupDocRef .updateData({
+      'groupId': groupDocRef.documentID,
+    }
+      
+    );
 
     DocumentReference userDocRef = userCollection.document(uid);
     return await userDocRef.updateData({
       'groups': FieldValue.arrayUnion([groupDocRef.documentID + '_' + groupName])
     });
+
   }
 
 

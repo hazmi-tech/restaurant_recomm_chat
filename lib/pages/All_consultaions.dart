@@ -71,8 +71,8 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
         .map((doc) =>GestureDetector(
       child:  Container(
         child:Column(children: <Widget>[
-            if (doc['admin']!=this._user.uid )
-            if ( !(getMembers(doc)).contains(this._user.uid) )
+          if (doc['admin']!=this._user.uid )
+          if ( !(getMembers(doc)).contains(this._user.uid) )
           Container(padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
        child:  ListTile(
            contentPadding:EdgeInsets.only(top:20,left:5) ,

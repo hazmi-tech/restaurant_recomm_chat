@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:group_chat_app/helper/helper_functions.dart';
+import 'package:group_chat_app/pages/chat_page.dart';
 import 'package:group_chat_app/pages/dropdown_formfield.dart';
 import 'package:group_chat_app/services/database_service.dart';
 
@@ -34,6 +35,8 @@ class OrderState extends State<Order>
   double _animatedHeight = 10.0;
 
   String _disc;
+
+  var _group;
   @override
   void initState() {
     super.initState();
@@ -625,7 +628,10 @@ class OrderState extends State<Order>
               String userId  = (await FirebaseAuth.instance.currentUser()).uid;
 await HelperFunctions.getUserNameSharedPreference().then((val) {
             DatabaseService(uid:  userId).createGroup(val, _disc,this.widget.city,_budget,_people);
-                     Navigator.of(context).pop();
+            DatabaseService(uid:  userId).searchByName(_disc).then((snapshot) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: snapshot.documents[0].data['groupId'], userName:userId, groupName: snapshot.documents[0].data['groupName'],)));
+             },
+           );
 });
 },
             child:  Text('ارسال', style: TextStyle(

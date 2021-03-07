@@ -222,7 +222,7 @@ AlertDialog passAlert(newEmail){
  
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-           Navigator.push(context, MaterialPageRoute(builder: (context) => Order()));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
 
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),

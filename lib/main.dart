@@ -52,8 +52,7 @@ class _MyAppState extends State<MyApp> {
       Theme.of(context).textTheme,
     ),
   ),
-      darkTheme: ThemeData.dark(),
-      //home: _isLoggedIn != null ? _isLoggedIn ? HomePage() : AuthenticatePage() : Center(child: CircularProgressIndicator()),
+        //home: _isLoggedIn != null ? _isLoggedIn ? HomePage() : AuthenticatePage() : Center(child: CircularProgressIndicator()),
       home: _isLoggedIn ? HomePage(): SplashScreen(_isLoggedIn),
       //home: HomePage(),
     );

@@ -64,11 +64,165 @@ List<String> members = List.from(doc['members']);
 return members;
 }
 
+ consultationSum(DocumentSnapshot doc){
+ return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          content:Container(
+
+            height: 180,
+            child: Column(
+              
+              children: [
+
+          Text('تفاصيل الاستشارة',
+          style: TextStyle(fontWeight:FontWeight.bold),
+          ),
+              const Divider(
+               color: Colors.orange,
+            height: 20,
+            thickness: 1,
+            indent: 20,
+            endIndent: 20,
+          ),
+         
+
+         Text.rich(
+  TextSpan(
+    
+    style: TextStyle(
+      
+      fontSize: 17,
+    ),
+    children: [
+
+
+      TextSpan(
+        text: doc['people'].toString()+'   ',
+      ),
+            WidgetSpan(
+        child: Icon(Icons.people),
+      ),
+
+      
+      TextSpan(
+        text: '     ' +doc['budget'].toString(),
+      ),
+            WidgetSpan(
+        child: Icon(Icons.attach_money),
+      ),
+    ],
+
+  ),
+          textAlign:TextAlign.right,
+
+),
+        SizedBox(height:10,)  ,
+       Text.rich(
+  TextSpan(
+    
+    style: TextStyle(
+      
+      fontSize: 17,
+    ),
+    children: [
+           WidgetSpan(
+        child: Icon(Icons.location_pin,
+         textDirection: TextDirection.rtl),
+      ),
+
+      TextSpan(
+        text: doc['cuisine'].toString()==''?'غير محدد'+'   ':doc['cuisine']+'   ',
+      ),
+ 
+
+                  WidgetSpan(
+        child: Icon(Icons.restaurant_rounded,
+        textDirection: TextDirection.rtl,),
+      ),
+      TextSpan(
+        text: doc['dist'].toString()==''?'غير محدد':doc['dist'],
+      ),
+
+      
+  
+    ],
+
+  ),
+          textAlign:TextAlign.right,
+          textDirection: TextDirection.rtl,
+
+),
+ SizedBox(height:15,)  ,
+   Text.rich(
+  TextSpan(
+    
+    style: TextStyle(
+      
+      fontSize: 17,
+    ),
+    children: [
+
+
+        TextSpan(
+        text: doc['pickup'].toString()==''?"طريقة الاستلام: غير محددة":"طريقة الاستلام:"+doc['pickup'],
+      ),
+
+      
+  
+    ],
+
+  ),
+          textAlign:TextAlign.center,
+          textDirection: TextDirection.rtl,
+
+),
+
+ SizedBox(height:15,)  ,
+   Text.rich(
+  TextSpan(
+    
+    style: TextStyle(
+      
+      fontSize: 17,
+    ),
+    children: [
+
+
+        TextSpan(
+        text: doc['event'].toString()==''?"المناسبة: غير محددة":"المناسبة :"+doc['event'],
+      ),
+
+      
+  
+    ],
+
+  ),
+          textAlign:TextAlign.center,
+          textDirection: TextDirection.rtl,
+
+),
+
+            ],),
+          ));
+          
+      }
+ );
+}
+
 
 getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
 
-    return snapshot.data.documents
+  List list = (snapshot.data.documents
         .map((doc) =>GestureDetector(
+          onTap: (){
+
+            consultationSum(doc);
+
+          },
       child:  Container(
         child:Column(children: <Widget>[
           if (doc['admin']!=this._user.uid )
@@ -95,7 +249,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
           title:  Text(doc['groupName'],
           textAlign: TextAlign.end
           , style: TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text(" عدد الأشخاص:"+doc['people'].toString()+" "+" الميزانية: "+doc['budget'].toString(),
+          subtitle: Text('اضغط للحصول على التفاصيل',
           textAlign: TextAlign.end,
            style: TextStyle(fontSize: 13.0)),
           trailing:CircleAvatar(
@@ -109,14 +263,15 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
         )
         
         )
-        ).toList();  
-        
-            
+        )).toList();   
+
+  return list;
+          
   }
 
   Widget groupsList() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("groups").where('city', isEqualTo: _city).where('isClosed', isEqualTo: false).snapshots(),
+        stream: Firestore.instance.collection("groups").where('city', isEqualTo: _chosenValue ).where('isClosed', isEqualTo: false).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           
           if (!snapshot.hasData) return Center(
@@ -148,6 +303,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
       // print(snapshots);
       setState(() {
         _city= snapshot.documents[0].data['city'];
+        _chosenValue =_city;
         _userName = snapshot.documents[0].data['fullName'];
         _email=snapshot.documents[0].data['email'];
         } );
@@ -252,17 +408,25 @@ Widget header(){
               'أبها',
               'الطايف',
               'ينبع',
+              'الدمام',
+              "الأحساء",
+              "الخبر",
+              "بريدة",
+              "تبوك",
+              "الجبيل",
+              "نجران",
+              "جازان"
             ].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
               );
             }).toList(),
+            hint:Text(this._city),
             onChanged: (String value) {
               setState(() {
                 print(value);
                 _chosenValue = value;
-                _city=value;
               });
             },
           )),

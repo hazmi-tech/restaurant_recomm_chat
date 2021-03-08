@@ -23,6 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
   final AuthService _auth = AuthService();
 
    int _selectedIndex=0;
+   String _chosenValue;
+
+  bool _editprofile;
 
   void initState() {
     super.initState();
@@ -284,7 +287,6 @@ Widget body(){
   String _newCity;
 
 
-  bool editprofile=false;
   return SingleChildScrollView(
     reverse: true,
 child: Container(
@@ -303,7 +305,7 @@ Container(
                     child: TextField(
                             onChanged:(text) {
                             _newUserName=text;
-                            editprofile=true;} ,
+                            _editprofile=true;} ,
                     textAlignVertical:TextAlignVertical.center,
                     textAlign:TextAlign.center,
                   decoration: InputDecoration(
@@ -332,7 +334,7 @@ Container(
                     },
                     onChanged:(text) {
                       _newEmail=text;
-                editprofile=true;} ,
+                _editprofile=true;} ,
                     textAlignVertical:TextAlignVertical.center,
                     textAlign:TextAlign.center,
                   decoration: InputDecoration(
@@ -356,24 +358,47 @@ Container(
                     padding: EdgeInsets.fromLTRB(10,10,10,10),
                     height: 60,
                     width: 200,
-                    child: TextField(
-                          onChanged:(text) {
-                          _newCity=text;
-                editprofile=true;} ,
-                    textAlignVertical:TextAlignVertical.center,
-                    textAlign:TextAlign.center,
-                  decoration: InputDecoration(
-  hintText: _city,
-  
-  border: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(5.0),
-    borderSide: BorderSide(
-      color: Colors.amber,
-      style: BorderStyle.solid,
-    ),
-  ),
-)),),
-                  Text('المدينة', style: TextStyle(fontSize: 17.0)),
+                    child:DropdownButton<String>(
+                      isExpanded: true,
+            hint: Text(_city,
+                      textAlign: TextAlign.start,),
+            value: _chosenValue,
+            //elevation: 5,
+            style: TextStyle(color: Colors.black
+            ),
+            items: <String>[
+              'جدة',
+              'الرياض',
+              'مكة',
+              'المدينة',
+              'أبها',
+              'الطايف',
+              'ينبع',
+              'الدمام',
+              "الأحساء",
+              "الخبر",
+              "بريدة",
+              "تبوك",
+              "الجبيل",
+              "نجران",
+              "جازان"
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value
+                ),
+              );
+            }).toList(),
+            onChanged: (String value) {
+              setState(() {
+                _chosenValue = value;
+              }
+              
+              );
+                 _editprofile=true;
+            },
+))
+                  ,Text('المدينة', style: TextStyle(fontSize: 17.0)),
                 
                 ],
               ),
@@ -388,10 +413,11 @@ Container(
   borderRadius: BorderRadius.circular(18.0),
 ),
             onPressed :() {
-            if(!editprofile) 
+               print(_editprofile);
+            if(!_editprofile) 
             ;
             else
-             _popupDialog(context,_newUserName,_newEmail,_newCity);},
+             _popupDialog(context,_newUserName,_newEmail,_chosenValue);},
             child:  Text('حدث معلوماتك', style: TextStyle(
               fontSize: 14,
               color: Colors.white

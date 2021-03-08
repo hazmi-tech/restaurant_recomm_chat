@@ -53,9 +53,14 @@ class DatabaseService {
       'groupName': groupName,
       'groupIcon': '',
       'isClosed':false,
+      'createdOn': DateTime.now().millisecondsSinceEpoch,
       'city':city,
       'budget':double.parse(budget),
       'people':int.parse(people),
+      'dist':'',
+      'cuisine':'',
+      'pickup':'',
+      'event':'',
       'admin': uid,
       'members': [],
       //'messages': ,
@@ -114,6 +119,17 @@ class DatabaseService {
 
 updateGroupMembers(List<dynamic> member, groupId ){
   Firestore.instance.collection('groups').document(groupId).updateData({"members": FieldValue.arrayUnion(member)});
+}
+
+addGroupOptFields(groupId,String dist, String cuisine,String pickup,String event){
+  if(dist!=null)
+  Firestore.instance.collection('groups').document(groupId).updateData({'dist':dist});
+  if(cuisine!=null)
+  Firestore.instance.collection('groups').document(groupId).updateData({'cuisine':cuisine});
+  if(pickup!=null)
+  Firestore.instance.collection('groups').document(groupId).updateData({'pickup':pickup});
+   if(event!=null)
+  Firestore.instance.collection('groups').document(groupId).updateData({'event':event});
 }
 
   // has user joined the group

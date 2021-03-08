@@ -319,7 +319,7 @@ Widget adBtn(){
                          Padding(
                             padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10),
                             child: new Text(
-                              "العروض ",
+                              "العروض \n (قريباً)",
                               style: TextStyle(
                                   fontSize: 15.0, fontWeight: FontWeight.bold),
                             ))

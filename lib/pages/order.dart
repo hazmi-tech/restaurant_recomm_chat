@@ -22,55 +22,23 @@ class OrderState extends State<Order>
   String _budget;
   String _people;
   String _dist;
-  String _cusine;
-  String _myActivity;
-  String _myActivityResult;
-  String _myActivity2;
-  String _myActivityResult2;
+  String _cuisine;
+  String _event;
   String _myActivity3;
-  String _myActivityResult3;
   final formKey = new GlobalKey<FormState>();
   final formKey2 = new GlobalKey<FormState>();
   final formKey3 = new GlobalKey<FormState>();
-  double _animatedHeight = 10.0;
+  double _animatedHeight = 0.0;
 
   String _disc;
 
-  var _group;
   @override
   void initState() {
     super.initState();
-    _myActivity = '';
-    _myActivityResult = '';
-    _myActivity2 = '';
-    _myActivityResult2 = '';
-    _myActivity3 = '';
-    _myActivityResult3 = '';
   }
 
-  _saveForm() {
-    var form = formKey.currentState;
-    var form2 = formKey2.currentState;
-    var form3 = formKey2.currentState;
-    if (form.validate()) {
-      form.save();
-      setState(() {
-        _myActivityResult = _myActivity;
-      });
-    }
-    if (form2.validate()) {
-      form2.save();
-      setState(() {
-        _myActivityResult2 = _myActivity2;
-      });
-    }
-    if (form3.validate()) {
-      form3.save();
-      setState(() {
-        _myActivityResult3 = _myActivity3;
-      });
-    }
-  }
+
+
 
 
   @override
@@ -117,6 +85,7 @@ class OrderState extends State<Order>
       Container(
         padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
               child: TextField(
+                
                 style: TextStyle(color: Colors.black, height: 0.5),
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -126,7 +95,71 @@ class OrderState extends State<Order>
               },
               ),
             ),
+       
+      Text(
+        'عدد الأشخاص',
+        style: TextStyle(color: Colors.black),
+      ),
         Container(
+          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Colors.black, height: 0.5),
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32)))),
+                        onChanged: (value){
+                          _people=value;
+
+                        },
+              ),
+        ),
+      Text(
+        'الميزانية',
+        style: TextStyle(color: Colors.black),
+      ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
+            child: TextField(
+              keyboardType: TextInputType.number,
+              style: TextStyle(color: Colors.black, height: 0.5),
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32)))),
+                onChanged: (value){
+                          _budget=value ;
+                        },
+            
+            ),
+    ),
+
+          new GestureDetector(
+            onTap: ()=>setState((){
+              _animatedHeight!=0.0?_animatedHeight=0.0:_animatedHeight=260.0;}
+              ),
+            child:  new Container(
+              child: new Text("*خيارات إضافية*",
+              
+                style: TextStyle(
+                  color: Colors.red,
+                  
+                ),
+              ),
+              //color: Colors.white,
+              height: 30.0,
+             // width: 100.0,
+            ),
+          ),
+
+
+        SingleChildScrollView(
+          child: new AnimatedContainer(duration: const Duration(milliseconds: 120),
+            height: _animatedHeight,
+            //color: Colors.tealAccent,
+           // width: 100.0,
+              child: ListView(
+                children: <Widget>[
+                  Container(
             child: Form(
               key: formKey,
               child: Column(
@@ -137,7 +170,7 @@ class OrderState extends State<Order>
               child: DropDownFormField(
                 titleText: 'موقع الطلب',
                 hintText: 'اختر موقعك',
-                value: _myActivity,
+                value: _dist ,
                 onSaved: (value) {
                   setState(() {
                     _dist = value;
@@ -401,15 +434,15 @@ class OrderState extends State<Order>
     child: DropDownFormField(
     titleText: 'نوع الطعام',
     hintText: 'ايش تشتهي؟',
-    value: _myActivity2,
+    value:_cuisine,
     onSaved: (value) {
     setState(() {
-    _cusine = value;
+    _cuisine = value;
     });
     },
     onChanged: (value) {
     setState(() {
-     _cusine  = value;
+    _cuisine  = value;
     });
     },
     dataSource: [
@@ -494,66 +527,6 @@ class OrderState extends State<Order>
     ),
     ),
     ),
-      Text(
-        'عدد الأشخاص',
-        style: TextStyle(color: Colors.black),
-      ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-              child: TextField(
-                style: TextStyle(color: Colors.black, height: 0.5),
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(32)))),
-                        onChanged: (value){
-                          _people=value;
-
-                        },
-              ),
-        ),
-      Text(
-        'الميزانية لكل فرد',
-        style: TextStyle(color: Colors.black),
-      ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
-            child: TextField(
-              style: TextStyle(color: Colors.black, height: 0.5),
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32)))),
-                onChanged: (value){
-                          _budget=value ;
-                        },
-            
-            ),
-    ),
-
-          new GestureDetector(
-            onTap: ()=>setState((){
-              _animatedHeight!=0.0?_animatedHeight=0.0:_animatedHeight=260.0;}
-              ),
-            child:  new Container(
-              child: new Text("*خيارات إضافية*",
-                style: TextStyle(
-                  color: Colors.red,
-                ),
-              ),
-              //color: Colors.white,
-              height: 25.0,
-             // width: 100.0,
-            ),
-          ),
-
-
-        SingleChildScrollView(
-          child: new AnimatedContainer(duration: const Duration(milliseconds: 120),
-            height: _animatedHeight,
-            //color: Colors.tealAccent,
-           // width: 100.0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
                   child: Text(
@@ -564,6 +537,9 @@ class OrderState extends State<Order>
                    Container(
                      padding: EdgeInsets.symmetric(horizontal: 20,vertical: 5),
                     child: TextField(
+                        onChanged:(event) {
+                _event=event;
+              },
                       style: TextStyle(color: Colors.black, height: 0.5),
                       decoration: InputDecoration(
                           border: OutlineInputBorder(
@@ -625,15 +601,26 @@ class OrderState extends State<Order>
   borderRadius: BorderRadius.circular(18.0),
 ),
             onPressed :() async {
+            if(_disc==null||_budget==null||_people==null){
+                   showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          content: Text('قم بتعبئة البيانات من فضلك' , textAlign: TextAlign.center,));
+      },
+    );            }else{
               String userId  = (await FirebaseAuth.instance.currentUser()).uid;
-await HelperFunctions.getUserNameSharedPreference().then((val) {
+            await HelperFunctions.getUserNameSharedPreference().then((val) {
             DatabaseService(uid:  userId).createGroup(val, _disc,this.widget.city,_budget,_people);
             DatabaseService(uid:  userId).searchByName(_disc).then((snapshot) {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: snapshot.documents[0].data['groupId'], userName:userId, groupName: snapshot.documents[0].data['groupName'],)));
-             },
+             DatabaseService(uid:  userId).addGroupOptFields(snapshot.documents[0].data['groupId'],_dist,_cuisine,_myActivity3,_event);
+             Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: snapshot.documents[0].data['groupId'], userName:userId, groupName: snapshot.documents[0].data['groupName'],)));
+              },
            );
 });
-},
+}},
             child:  Text('ارسال', style: TextStyle(
               fontSize: 14,
               color: Colors.white

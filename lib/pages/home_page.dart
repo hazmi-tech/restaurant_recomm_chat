@@ -219,10 +219,8 @@ Widget reqConBtn(){
                         ]),
              onPressed: (){
 
-Future.delayed(Duration.zero, () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => Order()));});
- },
-             ));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));})
+  );
 }
 
 Widget consBtn(){

@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:group_chat_app/helper/helper_functions.dart';
 import 'package:group_chat_app/pages/chat_page.dart';
 import 'package:group_chat_app/pages/dropdown_formfield.dart';
+import 'package:group_chat_app/pages/myconsultaions.dart';
 import 'package:group_chat_app/services/database_service.dart';
 
 
 class Order extends StatefulWidget {
   final String uid;
+  final String userName;
   final String city;
 
-  const Order({Key key, this.uid, this.city}) : super(key: key);
+  const Order({Key key, this.uid, this.city, this.userName}) : super(key: key);
   @override
   OrderState createState() {
     return OrderState();
@@ -21,10 +23,10 @@ class OrderState extends State<Order>
     with SingleTickerProviderStateMixin {
   String _budget;
   String _people;
-  String _dist;
-  String _cuisine;
-  String _event;
-  String _myActivity3;
+  String _dist='';
+  String _cuisine='';
+  String _event='';
+  String _myActivity3='';
   final formKey = new GlobalKey<FormState>();
   final formKey2 = new GlobalKey<FormState>();
   final formKey3 = new GlobalKey<FormState>();
@@ -613,12 +615,12 @@ class OrderState extends State<Order>
     );            }else{
               String userId  = (await FirebaseAuth.instance.currentUser()).uid;
             await HelperFunctions.getUserNameSharedPreference().then((val) {
-            DatabaseService(uid:  userId).createGroup(val, _disc,this.widget.city,_budget,_people);
+            DatabaseService(uid:  userId).createGroup(val, _disc,this.widget.city,_budget,_people,_dist,_cuisine,_event,_myActivity3);
             DatabaseService(uid:  userId).searchByName(_disc).then((snapshot) {
-             DatabaseService(uid:  userId).addGroupOptFields(snapshot.documents[0].data['groupId'],_dist,_cuisine,_myActivity3,_event);
-             Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: snapshot.documents[0].data['groupId'], userName:userId, groupName: snapshot.documents[0].data['groupName'],)));
-              },
-           );
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyCons(),));
+
+      });
 });
 }},
             child:  Text('ارسال', style: TextStyle(

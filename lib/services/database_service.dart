@@ -12,16 +12,19 @@ class DatabaseService {
   final CollectionReference groupCollection = Firestore.instance.collection('groups');
 
   // update userdata
-  Future updateUserData(String fullName, String email, String password) async {
+  Future updateUserData(String fullName, String email, String city) async {
     return await userCollection.document(uid).setData({
       'fullName': fullName,
       'email': email,
-      'password': password,
+      'city':city,
       'groups': [],
       'profilePic': ''
     });
   }
 
+  Future getUserDatabById(uid) async {
+    return userCollection.document(uid).snapshots();
+  }
     Future updateUserName( String fullName) async {
     return await userCollection.document(uid).updateData({
       'fullName': fullName,
@@ -48,7 +51,7 @@ class DatabaseService {
 
 
   // create group
-  Future createGroup(String userName, String groupName,String city,String budget,String people) async {
+  Future createGroup(String userName, String groupName,String city,String budget,String people, String dist,String cuisine,String event, String pickup) async {
     DocumentReference groupDocRef = await groupCollection.add({
       'groupName': groupName,
       'groupIcon': '',
@@ -57,13 +60,14 @@ class DatabaseService {
       'city':city,
       'budget':double.parse(budget),
       'people':int.parse(people),
-      'dist':'',
-      'cuisine':'',
-      'pickup':'',
-      'event':'',
+      'dist':dist,
+      'adminName':userName, 
+      'cuisine':cuisine,
+      'pickup':pickup,
+      'event':event,
       'admin': uid,
       'members': [],
-      //'messages': ,
+      'messages': '',
       'groupId':'',
       'recentMessage': '',
       'recentMessageSender': ''
@@ -76,10 +80,46 @@ class DatabaseService {
       
     );
 
+  if(dist!=null)
+  groupDocRef.updateData({'dist':dist});
+
+  if(cuisine!=null)
+  groupDocRef.updateData({'cuisine':cuisine});
+
+
+  if(pickup!=null)
+ groupDocRef.updateData({'pickup':pickup});
+
+
+   if(event!=null)
+ groupDocRef.updateData({'event':event});
+
+
+    groupDocRef.collection('messages').document().setData(
+        {
+        "message":"تفاصيل الاستشارة : \n"
+        "الوصف: "+ groupName+"\n"+
+        " الميزانية: "+ budget+"  عدد الأشخاص:  "+people+"\n\n"+
+        "تفاصيل إضافية : \n"+
+        "طريقة الاستلام: "+pickup+"\n"+"الحي: "+dist+"\n"+
+        " نوع المطعم: "+ cuisine+"  المناسبة:  "+event+"\n" , 
+        
+        "sender": userName,
+        'time': DateTime.now().millisecondsSinceEpoch,
+      }
+
+    );
+
     DocumentReference userDocRef = userCollection.document(uid);
     return await userDocRef.updateData({
       'groups': FieldValue.arrayUnion([groupDocRef.documentID + '_' + groupName])
     });
+
+  }
+
+
+  closeGroup(String groupId){
+  Firestore.instance.collection('groups').document(groupId).updateData({'isClosed':true});
 
   }
 
@@ -121,15 +161,37 @@ updateGroupMembers(List<dynamic> member, groupId ){
   Firestore.instance.collection('groups').document(groupId).updateData({"members": FieldValue.arrayUnion(member)});
 }
 
-addGroupOptFields(groupId,String dist, String cuisine,String pickup,String event){
+addGroupOptFields(groupId,String userName,String dist, String cuisine,String pickup,String event){
   if(dist!=null)
   Firestore.instance.collection('groups').document(groupId).updateData({'dist':dist});
+  else
+  dist="";
+
   if(cuisine!=null)
   Firestore.instance.collection('groups').document(groupId).updateData({'cuisine':cuisine});
+   else
+  cuisine="";
+
   if(pickup!=null)
   Firestore.instance.collection('groups').document(groupId).updateData({'pickup':pickup});
+   else
+ pickup="";
+
    if(event!=null)
   Firestore.instance.collection('groups').document(groupId).updateData({'event':event});
+   else
+  event="";
+
+
+  Firestore.instance.collection('groups').document(groupId).collection('messages').document().setData(
+        {
+        "message":"تفاصيل إضافية : \n"+"طريقة الاستلام: "+dist+"\n"+
+        " نوع المطعم: "+ cuisine+"  المناسبة:  "+event+"\n" , 
+        "sender": userName,
+        'time': DateTime.now().millisecondsSinceEpoch,
+      }
+
+    );
 }
 
   // has user joined the group
@@ -158,6 +220,8 @@ addGroupOptFields(groupId,String dist, String cuisine,String pickup,String event
     print(snapshot.documents[0].data);
     return snapshot;
   }
+
+
 
 Future<String> getSpecie(String email) async {
     DocumentReference documentReference = userCollection.where('email', isEqualTo: email) as DocumentReference;

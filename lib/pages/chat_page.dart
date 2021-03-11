@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:group_chat_app/pages/my_cons_hist.dart';
 import 'package:group_chat_app/services/database_service.dart';
+import 'package:group_chat_app/shared/loading.dart';
 import 'package:group_chat_app/widgets/message_tile.dart';
-import 'package:group_chat_app/pages/chat.dart';
-
 
 class ChatPage extends StatefulWidget {
 
@@ -21,225 +22,28 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin {
+class _ChatPageState extends State<ChatPage> {
   
   Stream<QuerySnapshot> _chats;
   TextEditingController messageEditingController = new TextEditingController();
 
-  Widget _chatMessages(){
-    return StreamBuilder(
-      stream: _chats,
-      builder: (context, snapshot){
-        return snapshot.hasData ?  ListView.builder(
-          itemCount: snapshot.data.documents.length,
-          itemBuilder: (context, index){
-            return MessageTile(
-              message: snapshot.data.documents[index].data["message"],
-              sender: snapshot.data.documents[index].data["sender"],
-              sentByMe: widget.userName == snapshot.data.documents[index].data["sender"],
-            );
-          }
-        )
-        :
-        Container();
-      },
-    );
-  }
+  String _userId;
 
-  _sendMessage() {
-    if (messageEditingController.text.isNotEmpty) {
-      Map<String, dynamic> chatMessageMap = {
-        "message": messageEditingController.text,
-        "sender": widget.userName,
-        'time': DateTime.now().millisecondsSinceEpoch,
-      };
+ String _admin;
 
-      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+ String _adminName;
 
-      setState(() {
-        messageEditingController.text = "";
-      });
-    }
-  }
+  bool _isClosed;
 
-  @override
-  void initState() {
-    super.initState();
-    DatabaseService().getChats(widget.groupId).then((val) {
-      // print(val);
-      setState(() {
-        _chats = val;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-        elevation: 0.4,
-        iconTheme: IconThemeData(color: Colors.black),
-    backgroundColor: Colors.white,
-    title: Row(
-    children: <Widget>[
-    Container(
-    width: 40,
-    height: 40,
-    margin: EdgeInsets.fromLTRB(0, 5, 10, 0),
-    child: CircleAvatar(
-    backgroundImage: NetworkImage('https://i.pravatar.cc/110'),
-    backgroundColor: Colors.grey[200],
-    minRadius: 30,
-    ),
-    ),
-    Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-    Text(
-    'محمد العيدروس',
-    style: TextStyle(color: Colors.black),
-    ),
-    Text(
-    'متصل الان',
-    style: TextStyle(
-    color: Colors.grey[400],
-    fontSize: 12,
-    ),
-    )
-
-    ],
-    ),
-            Column(
-              children: [
-                Padding(
-    padding: const EdgeInsets.all(28.0),
-    child: RaisedButton(
-    child: Text('الغاء الاستشارة'),
-    onPressed: () {
-    showAlertDialog(context);
-    },
-    ),
-    ),
-              ],
-            )
-    ],
-    ),
-    ),
-    body: Stack(
-    children: <Widget>[
-    Container(
-    color: Colors.white,
-    child: Column(
-    children: <Widget>[
-    Flexible(
-    child: ListView.builder(
-    itemCount: 1,
-    shrinkWrap: true,
-    itemBuilder: (BuildContext context, int index) {
-    return Padding(
-    padding: EdgeInsets.all(10),
-    child: Column(
-    children: <Widget>[
-    //Text(
-    //'11:12',
-    //style:
-    //TextStyle(color: Colors.grey, fontSize: 12),
-    //),
-    Bubble(
-    message: 'مطعم مأكولات بحرية فاخر عدد الأشخاص: 10 نوع المناسبة: اجتماع عمل، الاستلام في المطعم',
-    isMe: true,
-    ),
-    Bubble(
-    message: 'أهلاً معك محمد العيدروس، مطعم توينا أكثر مطعم بحري مناسب لهذا النوع من المناسبات، هادئ وراقي',
-    isMe: false,
-    ),
-    //Text(
-    //'Feb 25, 2018',
-    //style:
-    //TextStyle(color: Colors.grey, fontSize: 12),
-    //),
-    Bubble(
-    message: 'تسلم الله يعطيك العافية',
-    isMe: true,
-    ),
-    Bubble(
-    message: 'ولو في الخدمة، عليكم بالعافية',
-    isMe: false,
-    ),
-    ],
-
-    ),
-    );
-    },
-    ),
-    ),
-    ],
-    ),
-    ),
-      Positioned(
-        bottom: 0,
-        left: 0,
-        width: MediaQuery.of(context).size.width,
-        child: Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(color: Colors.white, boxShadow: [
-            BoxShadow(
-              color: Colors.grey[300],
-              offset: Offset(-2, 0),
-              blurRadius: 5,
-            ),
-          ]),
-          child: Row(
-            children: <Widget>[
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.camera,
-                  color: Color(0xff3E8DF3),
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.image,
-                  color: Color(0xff3E8DF3),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 15),
-              ),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    hintText: 'ارسال',
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.send,
-                  color: Color(0xff3E8DF3),
-                ),
-              ),
-            ],
-          ),
-        ),
-      )
-    ],
-    ),
-    );
-  }
-
+ 
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("الغاء"),
-      onPressed:  () {},
-    );
+      onPressed:  () {
+        DatabaseService().closeGroup(widget.groupId);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyConshist(),));});
+
     Widget continueButton = FlatButton(
       child: Text("تراجع"),
       onPressed:  () {Navigator.pop(context);},
@@ -261,84 +65,168 @@ class _ChatPageState extends State<ChatPage> with SingleTickerProviderStateMixin
       },
     );
   }
-}
 
-class Bubble extends StatelessWidget {
-  final bool isMe;
-  final String message;
 
-  Bubble({this.message, this.isMe});
 
+  Widget _chatMessages(){
+    return StreamBuilder(
+      stream: _chats,
+      builder: (context, snapshot){
+        return snapshot.hasData ?  Expanded(child:ListView.builder(
+          padding:  const EdgeInsets.only(top:10,bottom: 100.0),
+          itemCount: snapshot.data.documents.length,
+          itemBuilder: (context, index){
+            return MessageTile(
+              message: snapshot.data.documents[index].data["message"],
+              sender: snapshot.data.documents[index].data["sender"],
+              sentByMe: widget.userName==  snapshot.data.documents[index].data["sender"],
+              admin: _adminName,
+            );
+          }
+        ))
+        :
+        Container();
+      },
+    );
+  }
+
+
+  _sendMessage() {
+    if (messageEditingController.text.isNotEmpty) {
+      Map<String, dynamic> chatMessageMap = {
+        "message": messageEditingController.text,
+        "sender": widget.userName,
+        'time': DateTime.now().millisecondsSinceEpoch,
+      };
+
+      DatabaseService().sendMessage(widget.groupId, chatMessageMap);
+
+      setState(() {
+        messageEditingController.text = "";
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DatabaseService().getChats(widget.groupId).then((val){
+
+      // print(val);
+      setState(() {
+        _chats = val;
+      });
+    });
+
+      DatabaseService().searchByName(widget.groupName).then((snapshot) async {
+      // print(val);
+      setState(() {
+        _adminName= snapshot.documents[0].data['adminName'];
+        _isClosed=snapshot.documents[0].data['isClosed'];
+      });
+
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      padding: isMe ? EdgeInsets.only(left: 40) : EdgeInsets.only(right: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment:
-            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  gradient: isMe
-                      ? LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [
-                        0.1,
-                        1
-                      ],
-                      colors: [
-                        Color(0xFFFDA085),
-                        Color(0xFFFDA085),
-                      ])
-                      : LinearGradient(
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft,
-                      stops: [
-                        0.1,
-                        1
-                      ],
-                      colors: [
-                        Color(0xFFEBF5FC),
-                        Color(0xFFEBF5FC),
-                      ]),
-                  borderRadius: isMe
-                      ? BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(0),
-                    bottomLeft: Radius.circular(15),
-                  )
-                      : BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    topLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                    bottomLeft: Radius.circular(0),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment:
-                  isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+
+    if(_isClosed==null )
+    return Loading();
+    else
+    return Scaffold(
+
+      
+      appBar: AppBar(
+                iconTheme: IconThemeData(color: Colors.black),
+        title:SingleChildScrollView(
+  scrollDirection: Axis.horizontal,
+       child: Row(children: [
+
+        Text("استشارة:"+_adminName, style: TextStyle(color: Colors.black,fontSize: 15)),
+        
+
+            Column(
+              children: [
+                Padding(
+    padding: const EdgeInsets.all(28.0),
+    child:widget.userName==_adminName?  RaisedButton(
+            color: Colors.grey[200],
+            shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(18.0),
+  side: BorderSide(color: Colors.amber)),
+    child: Text('الغاء '),
+    onPressed: () {
+    showAlertDialog(context);
+    },
+    ): SizedBox(width: 0,)
+    ),
+              ],
+            )
+        ],
+        ))
+   ,backgroundColor: Colors.white,
+        elevation: 0.4,
+    ),
+      body: Container(
+        child: Stack(
+          children: <Widget>[
+            
+            _chatMessages(),
+            // Container(),
+            Container(
+              alignment: Alignment.bottomCenter,
+              width: MediaQuery.of(context).size.width,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+                color: Colors.grey[300],
+                child: Row(
                   children: <Widget>[
-                    Text(
-                      message,
-                      textAlign: isMe ? TextAlign.end : TextAlign.start,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.grey,
+                    
+                    Expanded(
+                      child: TextField(
+                        enabled: _isClosed?false:true,
+                        textAlign: TextAlign.right,
+                        textDirection: TextDirection.rtl,
+                        controller: messageEditingController,
+                        style: TextStyle(
+                          color: Colors.grey[500]
+                        ),
+                        decoration: InputDecoration(
+                          hintText:_isClosed?"هذه الاستشارة مغلقة":"اكتب رسالتك هنا..",
+                          hintStyle: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 16,
+                          ),
+                          border: InputBorder.none
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 12.0),
+
+                    GestureDetector(
+                      onTap: () {
+                        _sendMessage();
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      child: Container(
+                        height: 50.0,
+                        width: 50.0,
+                        decoration: BoxDecoration(
+                          color: new Color(0xFFFF8046),
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                        child: Center(child: Icon(Icons.send, color: Colors.white)),
                       ),
                     )
                   ],
                 ),
               ),
-            ],
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

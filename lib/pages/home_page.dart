@@ -144,10 +144,11 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
           ),
           preferredSize: Size.fromHeight(kToolbarHeight + 100)),
       body:SingleChildScrollView(
+        
 child:body()) ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
- Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city,userName: _userName)));
  }   ,
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,
@@ -167,23 +168,24 @@ Widget body(){
   return SingleChildScrollView(
 child:Column(
 // to apply margin in the main axis of the wrap
-  
+          mainAxisAlignment: MainAxisAlignment.center,
          children: <Widget>[
            
           Row( 
+                      mainAxisAlignment: MainAxisAlignment.center,
+
             children:<Widget>[ 
               Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
-              SizedBox(width:20),
               ButtonTheme(child:adBtn()),
               SizedBox(width: 40),
               ButtonTheme(child:reqConBtn()),
          ]),
          SizedBox(height:20 ),
              Row( 
-            
+                         mainAxisAlignment: MainAxisAlignment.center,  
+
             children:<Widget>[ 
               Padding(padding: EdgeInsets.only(left: 10.0,top: 10.0,right:10,bottom: 30),),
-                SizedBox(width: 20),
               ButtonTheme(child:consBtn()),
               SizedBox(width: 40),
               ButtonTheme( child:newconsBtn()),
@@ -219,7 +221,7 @@ Widget reqConBtn(){
                         ]),
              onPressed: (){
 
- Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));})
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city,userName: _userName)));})
   );
 }
 

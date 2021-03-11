@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/services.dart' ;
 import 'package:group_chat_app/helper/helper_functions.dart';
 import 'package:group_chat_app/pages/authenticate_page.dart';
@@ -11,10 +12,14 @@ import 'package:group_chat_app/pages/All_consultaions.dart';
 
 
 
-void main() => runApp(MyApp());
+void main() => runApp(  DevicePreview(
+    enabled: true,
+    builder: (context) => MyApp(), // Wrap your app
+  ),
+  );
 
 class MyApp extends StatefulWidget {
-  
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -45,8 +50,10 @@ class _MyAppState extends State<MyApp> {
         DeviceOrientation.portraitUp,
       ]);
     return MaterialApp(
-      title: 'Group Chats',
+      title: 'ايش ناكل؟',
       debugShowCheckedModeBanner: false,
+      locale: DevicePreview.locale(context), // Add the locale here
+      builder: DevicePreview.appBuilder, 
    theme: ThemeData(
     textTheme: GoogleFonts.tajawalTextTheme(
       Theme.of(context).textTheme,

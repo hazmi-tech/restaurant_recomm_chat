@@ -25,13 +25,15 @@ class _RegisterPageState extends State<RegisterPage> {
   String password = '';
   String error = '';
 
+  String userCity;
+
   _onRegister() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         _isLoading = true;
       });
 
-      await _auth.registerWithEmailAndPassword(fullName, email, password).then((result) async {
+      await _auth.registerWithEmailAndPassword(fullName, email, password ,userCity).then((result) async {
         if (result != null) {
           await HelperFunctions.saveUserLoggedInSharedPreference(true);
           await HelperFunctions.saveUserEmailSharedPreference(email);
@@ -66,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
       body: Form(
         key: _formKey,
         child: Container(
-          color: Colors.black,
+          color:Colors.white,
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0),
             children: <Widget>[
@@ -74,53 +76,106 @@ class _RegisterPageState extends State<RegisterPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Create or Join Groups", style: TextStyle(color: Colors.white, fontSize: 40.0, fontWeight: FontWeight.bold)),
-                    
+       Text("ايش ناكل؟", style: TextStyle(color: new Color(0xFFFF8046), fontSize: 40.0, fontWeight: FontWeight.bold)),
+                
                   SizedBox(height: 30.0),
-                    
-                  Text("Register", style: TextStyle(color: Colors.white, fontSize: 25.0)),
-                    
-                  SizedBox(height: 20.0),
-                    
-                  TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: textInputDecoration.copyWith(labelText: 'Full Name'),
-                    onChanged: (val) {
-                      setState(() {
-                        fullName = val;
-                      });
-                    },
-                  ),
-                    
-                  SizedBox(height: 15.0),
-                    
-                  TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: textInputDecoration.copyWith(labelText: 'Email'),
-                    validator: (val) {
-                      return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "Please enter a valid email";
-                    },
-                    onChanged: (val) {
-                      setState(() {
-                        email = val;
-                      });
-                    },
-                  ),
-                    
-                  SizedBox(height: 15.0),
-                    
-                  TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: textInputDecoration.copyWith(labelText: 'Password'),
-                    validator: (val) => val.length < 6 ? 'Password not strong enough' : null,
-                    obscureText: true,
-                    onChanged: (val) {
-                      setState(() {
-                        password = val;
-                      });
-                    },
-                  ),
+                
+                  Text("التسجيل", style: TextStyle(color: new Color(0xFFFF8046), fontSize: 25.0)),
 
+                  SizedBox(height: 20.0),
+                TextFormField(
+              style: TextStyle(color: Colors.black, height: 0.5),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.person,
+                  ),
+                  hintText: 'الاسم',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32)))),
+
+              onChanged: (val) {
+                setState(() {
+                  fullName = val;
+                });
+              },
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16, top: 8),
+              child: TextFormField(
+                style: TextStyle(color: Colors.black, height: 0.5),
+                decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.email),
+                    hintText: 'البريد الالكتروني',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(32)))),
+                validator: (val) {
+                  return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null :"من فضلك أدخل بريد الكتروني صحيح";
+               },
+                onChanged: (val) {
+                  setState(() {
+                    email = val;
+                  });
+                },
+
+              ),
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.black, height: 0.5),
+              decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.vpn_key),
+                  hintText: 'كلمة المرور',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(32)))),
+              validator: (val) => val.length < 6 ? 'كلمة المرور يجب أن تكون أطول من 6 أحرف'  : null,
+              obscureText: true,
+              onChanged: (val) {
+                setState(() {
+                  password = val;
+                });
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8, top: 16),
+              child:DropdownButton<String>(
+                      isExpanded: true,
+            hint: Text("اختر مدينتك",
+                      textAlign: TextAlign.start,),
+            value: userCity,
+            //elevation: 5,
+            style: TextStyle(color: Colors.black
+            ),
+            items: <String>[
+              'جدة',
+              'الرياض',
+              'مكة',
+              'المدينة',
+              'أبها',
+              'الطايف',
+              'ينبع',
+              'الدمام',
+              "الأحساء",
+              "الخبر",
+              "بريدة",
+              "تبوك",
+              "الجبيل",
+              "نجران",
+              "جازان"
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value
+                ),
+              );
+            }).toList(),
+            onChanged: (String value) {
+              setState(() {
+                userCity = value;
+              }
+              
+              );
+            },
+)),
                   SizedBox(height: 20.0),
                     
                   SizedBox(
@@ -128,9 +183,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 50.0,
                     child: RaisedButton(
                       elevation: 0.0,
-                      color: Colors.blue,
+                      color: Colors.yellow[700],
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                      child: Text('Register', style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                      child: Text('سجل', style: TextStyle(color: Colors.white, fontSize: 16.0)),
                       onPressed: () {
                         _onRegister();
                       }
@@ -141,12 +196,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     
                   Text.rich(
                     TextSpan(
-                      text: "Already have an account? ",
-                      style: TextStyle(color: Colors.white, fontSize: 14.0),
+                      text: "لديك حساب؟",
+                      style: TextStyle(color:  Colors.grey[700], fontSize: 14.0),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'Sign In',
-                          style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
+                          text: 'سجل الدخول',
+                          style: TextStyle(color:  Colors.grey[700], decoration: TextDecoration.underline),
                           recognizer: TapGestureRecognizer()..onTap = () {
                             widget.toggleView();
                           },

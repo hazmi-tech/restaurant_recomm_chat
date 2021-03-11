@@ -5,8 +5,8 @@ class MessageTile extends StatelessWidget {
   final String message;
   final String sender;
   final bool sentByMe;
-
-  MessageTile({this.message, this.sender, this.sentByMe});
+  final  String admin;
+  MessageTile({this.message, this.sender, this.sentByMe, this.admin});
 
 
   @override
@@ -33,14 +33,14 @@ class MessageTile extends StatelessWidget {
             topRight: Radius.circular(23),
             bottomRight: Radius.circular(23)
           ),
-          color: sentByMe ? Colors.blueAccent : Colors.grey[700],
+          color: sentByMe ? Colors.grey[300] : Colors.grey[200],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(sender.toUpperCase(), textAlign: TextAlign.start, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
+            Text( sender.toUpperCase(), textAlign: TextAlign.start,textDirection:TextDirection.rtl, style: TextStyle(fontSize: 13.0, fontWeight: FontWeight.bold, color:admin==sender?Colors.deepOrange[600] :Colors.black, letterSpacing: -0.5)),
             SizedBox(height: 7.0),
-            Text(message, textAlign: TextAlign.start, style: TextStyle(fontSize: 15.0, color: Colors.white)),
+            Text(message, textAlign: TextAlign.start, textDirection:TextDirection.rtl ,style: TextStyle(fontSize: 15.0, color:  Colors.grey[700])),
           ],
         ),
       ),

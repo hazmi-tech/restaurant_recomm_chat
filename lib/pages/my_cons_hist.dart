@@ -98,7 +98,7 @@ getExpenseItems(bool joined, AsyncSnapshot<QuerySnapshot> snapshot) {
   Widget groupsList() {
     bool joined=false;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("groups").where('admin', isEqualTo: this._user.uid).where('isClosed', isEqualTo: true).snapshots(),
+        stream: Firestore.instance.collection("groups").where('admin', isEqualTo: this._user.uid).where('isClosed', isEqualTo: true).orderBy('createdOn',descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return new Center (child: Text("لا توجد لديك استشارات مغلقة"));
           return new ListView(children: getExpenseItems(joined,snapshot));
@@ -109,7 +109,7 @@ getExpenseItems(bool joined, AsyncSnapshot<QuerySnapshot> snapshot) {
   Widget joindgroupsList() {
     bool joined=true;
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("groups").where('members' ,arrayContains: this._user.uid).where('isClosed', isEqualTo: true).snapshots(),
+        stream: Firestore.instance.collection("groups").where('members' ,arrayContains: this._user.uid).where('isClosed', isEqualTo: true).orderBy('createdOn',descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) return new Center (child: Text("لا توجد لديك استشارات مغلقة"));
           return new ListView(children: getExpenseItems(joined,snapshot));
@@ -194,7 +194,7 @@ Future.delayed(Duration.zero, () {
       body:body() ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
- Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city,userName: _userName)));
          },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,
@@ -215,41 +215,52 @@ Widget header(){
             child:          Container(
               color: new Color(0xFFFF8046),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-               
-              
+                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                             
 GestureDetector(
   onTap: () {
-    Future.delayed(Duration.zero, () {
+Future.delayed(Duration.zero, () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MyCons()));});
-
-   } ,
-  child: Padding(
-    padding: EdgeInsets.only(right: 290),
-    child:Icon(Icons.arrow_back,
-    color: Colors.white,
-    ),)),
-                  Padding(
-                  padding: EdgeInsets.only(left:140 ),
-                  child:Text(
+} ,
+  child: Row( 
+     children: <Widget> [
+                    Padding(
+                      padding: EdgeInsets.only(left:20),
+                      child:Icon(Icons.arrow_back, color:Colors.white)),
+     ]),),
+ Column(
+           
+                children:[
+                  
+                  Padding( 
+                    padding: EdgeInsets.only(left: 80),
+                    child:Text(
                     'استشاراتي السابقة ',
-                    textAlign: TextAlign.justify,
+                    textAlign: TextAlign.right,
                     style: TextStyle(color: Colors.white,
                     
-                     
+
                      fontSize: 25),
     
-                  )),
-                  Padding(
-                  padding: EdgeInsets.only(left:60 ),
-                  child:Text(
-                    'الاستشارات المغلقة التي نشرتها أو أجبت عليها',
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.white),
+                  ),
+                   ),
+
+                         Padding( 
+                   padding: EdgeInsets.only(bottom:60,right:20),
+
+                    child:Text(
+                    'طلبات الاستشارة المغلقة التي طرحتها أو استقبلتها ',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(color: Colors.white,
+                    ),
     
-                  )),
+                  ),
+                   )
+
+
+                 ] )
                 ],
               ),
  ));

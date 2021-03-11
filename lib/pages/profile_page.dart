@@ -98,6 +98,8 @@ AlertDialog passAlert(newEmail){
       title: Text(" قم بإدخال كلمة المرور "
       ,textAlign:TextAlign.right ,),
        content: Row(
+                               mainAxisAlignment: MainAxisAlignment.center,
+
          children: <Widget> 
        [  
 
@@ -225,7 +227,7 @@ AlertDialog passAlert(newEmail){
  
       floatingActionButton: FloatingActionButton(
         onPressed: () {
- Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city,userName: _userName)));
 
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
@@ -293,8 +295,8 @@ child: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Padding(padding:EdgeInsets.only(left: 60) 
-              ,child: Column(children: [ Row(
+            Column(children: [ Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
 
                 children: <Widget>[
 Container(
@@ -322,6 +324,8 @@ Container(
                 ],
               ),
               Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+
                 children: <Widget>[
                     Container(
                     padding: EdgeInsets.fromLTRB(10,10,10,10),
@@ -353,6 +357,8 @@ Container(
                 ],
               ),
                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+
                 children: <Widget>[
                     Container(
                     padding: EdgeInsets.fromLTRB(10,10,10,10),
@@ -404,9 +410,9 @@ Container(
               ),
             
              Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
 
               children:[
-                SizedBox(width: 60,),
                 RaisedButton(
             color: Colors.yellow[700],
             shape: RoundedRectangleBorder(
@@ -425,7 +431,7 @@ Container(
           )]),
               
               ],)
-              ),
+              
              
             ],
           )));

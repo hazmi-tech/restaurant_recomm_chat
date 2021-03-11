@@ -1,26 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() => runApp(forgotpass());
-
-class forgotpass extends StatelessWidget {
+class Forgotpass extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'forgot password',
-      home: HomePage(),
-    );
-  }
+  ForgotpassState createState() => ForgotpassState();
+
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  HomePageState createState() {
-    return HomePageState();
-  }
-}
-
-class HomePageState extends State<HomePage>
+class ForgotpassState extends State<Forgotpass>
     with SingleTickerProviderStateMixin {
   bool isLogin = true;
   Animation<double> loginSize;

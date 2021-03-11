@@ -13,6 +13,7 @@ import 'package:group_chat_app/pages/profile_page.dart';
 import 'package:group_chat_app/pages/search_page.dart';
 import 'package:group_chat_app/services/auth_service.dart';
 import 'package:group_chat_app/services/database_service.dart';
+import 'package:group_chat_app/shared/loading.dart';
 import 'package:group_chat_app/widgets/group_tile.dart';
 
 class AllCons extends StatefulWidget {
@@ -236,8 +237,8 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
   borderRadius: BorderRadius.circular(18.0),
   side: BorderSide(color: Colors.amber)
 ),
-            onPressed: ()  {
-              DatabaseService(uid: _user.uid).updateGroupMembers([this._user.uid],doc['groupId']);
+            onPressed: ()  async {
+              await DatabaseService(uid: _user.uid).updateGroupMembers([this._user.uid],doc['groupId']);
               Navigator.push(context, MaterialPageRoute(builder: (context) => ChatPage(groupId: doc['groupId'], userName:_userName, groupName: doc['groupName'],)));
             },
             child:  Text('شارك', style: TextStyle(
@@ -271,7 +272,7 @@ getExpenseItems(AsyncSnapshot<QuerySnapshot> snapshot) {
 
   Widget groupsList() {
     return StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("groups").where('city', isEqualTo: _chosenValue ).where('isClosed', isEqualTo: false).snapshots(),
+        stream: Firestore.instance.collection("groups").where('city', isEqualTo: _chosenValue ).where('isClosed', isEqualTo: false).orderBy('createdOn',descending: true).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           
           if (!snapshot.hasData) return Center(
@@ -355,6 +356,8 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
    break;
   }
   
+  if(_city== '')
+  return Loading();
     return Scaffold(
       appBar: PreferredSize(
           child:header()         
@@ -362,7 +365,7 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) =>MyC
       body:body() ,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
- Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city)));
+ Navigator.push(context, MaterialPageRoute(builder: (context) => Order(uid:_user.uid,city:_city,userName: _userName)));
         },
         child: Icon(Icons.add, color: Colors.amber[800], size: 30.0),
         backgroundColor: Colors.white,
@@ -385,11 +388,12 @@ Widget header(){
               color: new Color(0xFFFF8046),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-               
-              
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  Row( children: <Widget> [
-      
+                  Row( 
+
+                    children: <Widget> [
+                  
                    Padding(
                      padding: EdgeInsets.only(left:20),
                     child:DropdownButton<String>(
@@ -430,26 +434,38 @@ Widget header(){
               });
             },
           )),
-                  Padding(
-                  padding: EdgeInsets.only(left:70 ),
-                  child:Text(
+       ]),
+       Column(
+           
+                children:[
+                  
+                  Padding( 
+                    padding: EdgeInsets.only(bottom: 0),
+                    child:Text(
                     'أحدث الاستشارات ',
-                    textAlign: TextAlign.justify,
+                    textAlign: TextAlign.right,
                     style: TextStyle(color: Colors.white,
                     
 
                      fontSize: 25),
     
-                  ))]),
-                  Padding(
-                  padding: EdgeInsets.only(left:120 ),
-                  child:Text(
+                  ),
+                   ),
+
+                         Padding( 
+                   padding: EdgeInsets.only(bottom:60,right:20),
+
+                    child:Text(
                     'طلبات الاستشارة المطروحة حديثاً ',
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.right,
+                    style: TextStyle(color: Colors.white,
+                    ),
     
-                  )),
-                ],
+                  ),
+                   )
+
+
+                 ] )],
               ),
  ));
 }

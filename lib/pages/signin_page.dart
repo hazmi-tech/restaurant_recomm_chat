@@ -6,6 +6,7 @@ import 'package:group_chat_app/pages/home_page.dart';
 import 'package:group_chat_app/services/auth_service.dart';
 import 'package:group_chat_app/services/database_service.dart';
 import 'package:group_chat_app/shared/constants.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:group_chat_app/shared/loading.dart';
 
 class SignInPage extends StatefulWidget {
@@ -71,7 +72,7 @@ class _SignInPageState extends State<SignInPage> {
       body: Form(
         key: _formKey,
         child: Container(
-          color: Colors.black,
+          color: Colors.white,
           child: ListView(
             padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 80.0),
             children: <Widget>[
@@ -79,42 +80,51 @@ class _SignInPageState extends State<SignInPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Text("Create or Join Groups", style: TextStyle(color: Colors.white, fontSize: 40.0, fontWeight: FontWeight.bold)),
+                  Text("ايش ناكل؟", style: TextStyle(color: new Color(0xFFFF8046), fontSize: 40.0, fontWeight: FontWeight.bold)),
                 
                   SizedBox(height: 30.0),
                 
-                  Text("Sign In", style: TextStyle(color: Colors.white, fontSize: 25.0)),
+                  Text("تسجيل الدخول", style: TextStyle(color: new Color(0xFFFF8046), fontSize: 25.0)),
 
                   SizedBox(height: 20.0),
-                
                   TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: textInputDecoration.copyWith(labelText: 'Email'),
+                  style: TextStyle(color: Colors.black, height: 0.5),
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.email),
+                        hintText: 'البريد الالكتروني',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(32))
+                            
+                        )
+                    ),
                     validator: (val) {
-                      return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "Please enter a valid email";
+                      return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "من فضلك أدخل بريد الكتروني صحيح";
                     },
-                  
                     onChanged: (val) {
                       setState(() {
                         email = val;
                       });
                     },
                   ),
-                
-                  SizedBox(height: 15.0),
-                
+
+                  Container(height: 8,),
                   TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    decoration: textInputDecoration.copyWith(labelText: 'Password'),
-                    validator: (val) => val.length < 6 ? 'Password not strong enough' : null,
+                    style: TextStyle(color: Colors.black, height: 0.5),
+                    decoration: InputDecoration(
+                        prefixIcon: Icon(Icons.vpn_key),
+                        hintText: 'كلمة المرور',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(32)))),
+                    validator: (val) => val.length < 6 ? 'كلمة المرور يجب أن تكون أطول من 6 أحرف' : null,
                     obscureText: true,
                     onChanged: (val) {
                       setState(() {
                         password = val;
                       });
                     },
+
                   ),
-                
                   SizedBox(height: 20.0),
                 
                   SizedBox(
@@ -122,9 +132,9 @@ class _SignInPageState extends State<SignInPage> {
                     height: 50.0,
                     child: RaisedButton(
                       elevation: 0.0,
-                      color: Colors.blue,
+                      color: Colors.yellow[700],
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-                      child: Text('Sign In', style: TextStyle(color: Colors.white, fontSize: 16.0)),
+                      child: Text('سجل الدخول', style: TextStyle(color: Colors.white, fontSize: 16.0)),
                       onPressed: () {
                         _onSignIn();
                       }
@@ -135,13 +145,13 @@ class _SignInPageState extends State<SignInPage> {
                   
                   Text.rich(
                     TextSpan(
-                      text: "Don't have an account? ",
-                      style: TextStyle(color: Colors.white, fontSize: 14.0),
+                      text: "ليس لديك حساب؟ ",
+                      style: TextStyle(color:  Colors.grey[700], fontSize: 14.0),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'Register here',
+                          text: 'سجل من هنا',
                           style: TextStyle(
-                            color: Colors.white,
+                            color:  Colors.grey[700],
                             decoration: TextDecoration.underline
                           ),
                           recognizer: TapGestureRecognizer()..onTap = () {
@@ -157,6 +167,45 @@ class _SignInPageState extends State<SignInPage> {
                   Text(error, style: TextStyle(color: Colors.red, fontSize: 14.0)),
                 ],
               ),
+
+              
+                  
+                    Text(
+
+                       "أو سجل باستخدام: ",
+                       textAlign: TextAlign.center,
+                       textDirection: TextDirection.rtl,
+                      style: TextStyle(color:  Colors.grey[700], fontSize: 14.0)
+                      ),
+                  
+                
+             
+                  Container(height: 12,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+
+                      Container(
+
+                          child:
+
+                          SignInButton(
+
+                            Buttons.Facebook,
+                            mini: true,
+                            onPressed: () {},
+                          )
+                      ),
+                      Container(
+                          child:
+                          SignInButton(
+                            Buttons.Twitter,
+                            mini: true,
+                            onPressed: () {},
+                          )
+                      ),
+                    ],
+                  ),
             ],
           ),
         ),

@@ -1,3 +1,6 @@
+import 'package:group_chat_app/services/database_service.dart';
+import 'package:group_chat_app/services/database_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -9,12 +12,18 @@ class Forgotpass extends StatefulWidget {
 
 class ForgotpassState extends State<Forgotpass>
     with SingleTickerProviderStateMixin {
+  String email = '';
+  String password = '';
   bool isLogin = true;
   Animation<double> loginSize;
   AnimationController loginController;
   AnimatedOpacity opacityAnimation;
   Duration animationDuration = Duration(milliseconds: 270);
 
+  //@override
+  //Future<void> resetPassword(String email) async {
+ //   await _firebaseAuth.sendPasswordResetEmail(email: email);
+  //}
   @override
   void initState() {
     super.initState();
@@ -34,7 +43,7 @@ class ForgotpassState extends State<Forgotpass>
     super.dispose();
   }
 
-  Widget _buildLoginWidgets() {
+  Widget _buildWidgets() {
     return Container(
       padding: EdgeInsets.only(bottom: 62, top: 16),
       width: MediaQuery.of(context).size.width,
@@ -81,7 +90,7 @@ class ForgotpassState extends State<Forgotpass>
     );
   }
 
-  Widget _buildRegistercomponents() {
+  Widget _buildreset() {
     return Padding(
       padding: EdgeInsets.only(
           left: 42,
@@ -103,37 +112,58 @@ class ForgotpassState extends State<Forgotpass>
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16, top: 16),
-            child: TextField(
-              style: TextStyle(color: Colors.black, height: 0.5),
+          
+            //padding: const EdgeInsets.only(bottom: 16, top: 16),
+            TextFormField(
+              style: TextStyle(color: Colors.white, height: 0.5),
               decoration: InputDecoration(
                   prefixIcon: Icon(Icons.email),
                   hintText: 'البريد الالكتروني',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(32)))),
+                      borderRadius: BorderRadius.all(Radius.circular(32))
+                  )
+              ),
+              validator: (val) {
+                return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "Please enter a valid email";
+              },
+              onChanged: (val) {
+                setState(() {
+                  email = val;
+                });
+              },
             ),
-          ),
+
+            Container(height: 8,),
+          
 
           Padding(
             padding: const EdgeInsets.only(top: 24),
-            child: Container(
-              width: 200,
-              height: 40,
-              margin: EdgeInsets.only(top: 20),
-              decoration: BoxDecoration(
-                  color:Color(0xffff8046),
-                  borderRadius: BorderRadius.all(Radius.circular(50))
-              ),
-              child: Center(
-                child: Text(
-                  'ارسال',
-                  style: TextStyle(color: Colors.white,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-              ),
-            ) ,
+    child: RaisedButton(
+    // width: 200,
+    //height: 40,
+    // margin: EdgeInsets.only(top: 32),
+    //decoration: BoxDecoration(
+    color: Colors.white,
+    shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(50)),
+    ),
+
+
+    child:  Center(
+    child: Text(
+    'ارسال',
+    style: TextStyle(color: Color(0XFFFF0000000),
+    fontWeight: FontWeight.bold
+    ),
+    ),
+    ),
+
+    onPressed: () async {
+        await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+        Navigator.of(context).pop();
+      
+    },
+    ),
           )
         ],
       ),
@@ -156,7 +186,7 @@ class ForgotpassState extends State<Forgotpass>
             child: AnimatedOpacity(
               opacity: isLogin ? 0.0 : 1.0,
               duration: animationDuration,
-              child: Container(child: _buildRegistercomponents()),
+              child: Container(child: _buildreset()),
             ),
           ),
           Align(
@@ -191,7 +221,7 @@ class ForgotpassState extends State<Forgotpass>
           AnimatedBuilder(
             animation: loginController,
             builder: (context, child) {
-              return _buildLoginWidgets();
+              return _buildWidgets();
             },
           ),
           Align(
